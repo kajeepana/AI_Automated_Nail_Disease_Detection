@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="320dp"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:orientation="vertical"
+    android:background="@drawable/logout_icon_bg"
+    android:padding="24dp"
+    android:gravity="center">
+
+    <!-- Icon Circle -->
+    <ImageView
+        android:id="@+id/imgLogout"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/logout_icon_bg"
+        android:padding="16dp"
+        android:src="@drawable/ic_logout"
+        android:scaleType="centerInside"
+        android:contentDescription="Logout Icon"/>
+
+    <!-- Title -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Ready to leave?"
+        android:textStyle="bold"
+        android:textSize="24sp"
+        android:textColor="#222222"/>
+
+    <!-- Message -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:gravity="center"
+        android:text="Your AI analysis progress is saved.\nDo you want to continue your\nsession or log out?"
+        android:textSize="14sp"
+        android:textColor="#777777"/>
+
+    <!-- Continue Button -->
+    <Button
+        android:id="@+id/btnContinue"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_marginTop="28dp"
+        android:text="Continue Session"
+        android:textAllCaps="false"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/continue_button"/>
+
+    <!-- Logout Button -->
+    <Button
+        android:id="@+id/btnLogout"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_marginTop="14dp"
+        android:text="Log Out"
+        android:textAllCaps="false"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/logout_button"/>
+
+    <!-- Cancel -->
+    <TextView
+        android:id="@+id/txtCancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="22dp"
+        android:text="Cancel"
+        android:textStyle="bold"
+        android:textColor="#444444"
+        android:textSize="16sp"/>
+
+</LinearLayout>
