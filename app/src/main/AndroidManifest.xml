@@ -18,19 +18,24 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AIAutomatedNailDiseaseDetection">
 
-        <activity android:name=".activities.UploadImageActivity" />
-        <activity android:name=".activities.ProfileActivity" />
-        <activity android:name=".activities.LoginActivity" />
-        <activity android:name=".activities.RegisterActivity" />
-        <activity android:name=".activities.WelcomeActivity" />
+        <activity android:name=".activities.UploadImageActivity"/>
+        <activity android:name=".activities.ProfileActivity"/>
+        <activity android:name=".activities.LoginActivity"/>
+        <activity android:name=".activities.RegisterActivity"/>
+        <activity android:name=".activities.WelcomeActivity"/>
+
+        <activity android:name=".activities.AnalyzeActivity"/>
+        <activity android:name=".activities.ResultActivity"/>
+        <activity android:name=".activities.FeedbackActivity"/>
+        <activity android:name=".activities.LeaveActivity"/>
 
         <activity
             android:name=".activities.SplashActivity"
             android:exported="true">
 
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
 
         </activity>
