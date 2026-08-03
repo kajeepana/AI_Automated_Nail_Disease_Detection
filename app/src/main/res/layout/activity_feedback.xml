@@ -76,7 +76,7 @@
                 android:textColorHint="#B0B0B0"/>
 
             <!-- Submit Button -->
-
+-
             <Button
                 android:id="@+id/btnSubmit"
                 android:layout_width="317dp"
