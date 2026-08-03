@@ -12,7 +12,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.aiautomatednaildiseasedetection.R;
-import com.example.aiautomatednaildiseasedetection.database.DatabaseHelper;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -20,17 +19,11 @@ public class LoginActivity extends AppCompatActivity {
     private Button btnLogin, btnRegister;
     private TextView txtForgot;
 
-    private DatabaseHelper databaseHelper;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // Database
-        databaseHelper = new DatabaseHelper(this);
-
-        // Initialize Views
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
 
@@ -64,48 +57,34 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
 
-            // Login Check
-            boolean success = databaseHelper.loginUser(email, password);
+            // TODO: Retrofit Login API will be added later
 
-            if (success) {
+            Toast.makeText(
+                    LoginActivity.this,
+                    "Login Successful!",
+                    Toast.LENGTH_SHORT
+            ).show();
 
-                Toast.makeText(
-                        LoginActivity.this,
-                        "Login Successful!",
-                        Toast.LENGTH_SHORT
-                ).show();
+            Intent intent = new Intent(
+                    LoginActivity.this,
+                    ProfileActivity.class
+            );
 
-                Intent intent = new Intent(
-                        LoginActivity.this,
-                        ProfileActivity.class
-                );
+            intent.putExtra("email", email);
 
-                // Pass email to Profile
-                intent.putExtra("email", email);
-
-                startActivity(intent);
-                finish();
-
-            } else {
-
-                Toast.makeText(
-                        LoginActivity.this,
-                        "Invalid Email or Password",
-                        Toast.LENGTH_SHORT
-                ).show();
-            }
+            startActivity(intent);
+            finish();
 
         });
 
         // Register Button
         btnRegister.setOnClickListener(v -> {
 
-            Intent intent = new Intent(
+            Toast.makeText(
                     LoginActivity.this,
-                    RegisterActivity.class
-            );
-
-            startActivity(intent);
+                    "Register Screen Coming Soon",
+                    Toast.LENGTH_SHORT
+            ).show();
 
         });
 

@@ -9,7 +9,6 @@
     android:padding="24dp"
     android:gravity="center">
 
-    <!-- Icon Circle -->
     <ImageView
         android:id="@+id/imgLogout"
         android:layout_width="60dp"
@@ -20,7 +19,6 @@
         android:scaleType="centerInside"
         android:contentDescription="Logout Icon"/>
 
-    <!-- Title -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -30,7 +28,6 @@
         android:textSize="24sp"
         android:textColor="#222222"/>
 
-    <!-- Message -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -40,7 +37,6 @@
         android:textSize="14sp"
         android:textColor="#777777"/>
 
-    <!-- Continue Button -->
     <Button
         android:id="@+id/btnContinue"
         android:layout_width="match_parent"
@@ -52,7 +48,6 @@
         android:textColor="#FFFFFF"
         android:background="@drawable/continue_button"/>
 
-    <!-- Logout Button -->
     <Button
         android:id="@+id/btnLogout"
         android:layout_width="match_parent"
@@ -64,7 +59,6 @@
         android:textColor="#FFFFFF"
         android:background="@drawable/logout_button"/>
 
-    <!-- Cancel -->
     <TextView
         android:id="@+id/txtCancel"
         android:layout_width="wrap_content"

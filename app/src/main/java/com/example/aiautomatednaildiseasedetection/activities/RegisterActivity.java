@@ -10,24 +10,17 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.aiautomatednaildiseasedetection.R;
-import com.example.aiautomatednaildiseasedetection.database.DatabaseHelper;
 
 public class RegisterActivity extends AppCompatActivity {
 
     private EditText etFullName, etEmail, etPassword, etConfirmPassword;
     private Button btnCreateAccount, txtLogin;
 
-    private DatabaseHelper databaseHelper;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        // Initialize Database
-        databaseHelper = new DatabaseHelper(this);
-
-        // Initialize Views
         etFullName = findViewById(R.id.etFullName);
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
@@ -75,54 +68,25 @@ public class RegisterActivity extends AppCompatActivity {
                 return;
             }
 
-            // Check if email already exists
-            if (databaseHelper.checkEmail(email)) {
+            // Backend not connected yet
+            Toast.makeText(RegisterActivity.this,
+                    "Validation Successful! Backend connection will be added later.",
+                    Toast.LENGTH_LONG).show();
 
-                Toast.makeText(RegisterActivity.this,
-                        "Email already exists!",
-                        Toast.LENGTH_SHORT).show();
-
-                return;
-            }
-
-            // Register User
-            boolean success = databaseHelper.registerUser(
-                    fullName,
-                    email,
-                    password
-            );
-
-            if (success) {
-
-                Toast.makeText(RegisterActivity.this,
-                        "Registration Successful!",
-                        Toast.LENGTH_SHORT).show();
-
-                startActivity(new Intent(
-                        RegisterActivity.this,
-                        LoginActivity.class));
-
-                finish();
-
-            } else {
-
-                Toast.makeText(RegisterActivity.this,
-                        "Registration Failed!",
-                        Toast.LENGTH_SHORT).show();
-            }
+            // Go to Login Screen
+            Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
 
         });
 
         // Login Button
         txtLogin.setOnClickListener(view -> {
 
-            startActivity(new Intent(
-                    RegisterActivity.this,
-                    LoginActivity.class));
-
+            Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+            startActivity(intent);
             finish();
 
         });
-
     }
 }

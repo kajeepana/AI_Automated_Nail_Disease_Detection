@@ -19,7 +19,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.aiautomatednaildiseasedetection.R;
-import com.example.aiautomatednaildiseasedetection.database.DatabaseHelper;
 
 import java.util.Calendar;
 
@@ -39,8 +38,6 @@ public class ProfileActivity extends AppCompatActivity {
     private Button btnSave;
     private Button btnSkip;
 
-    private DatabaseHelper databaseHelper;
-
     private String loggedInEmail;
 
     private ActivityResultLauncher<Intent> galleryLauncher;
@@ -49,9 +46,6 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-
-        // Database
-        databaseHelper = new DatabaseHelper(this);
 
         // Logged in email
         loggedInEmail = getIntent().getStringExtra("email");
@@ -78,34 +72,9 @@ public class ProfileActivity extends AppCompatActivity {
 
         // Load saved profile
         if (loggedInEmail != null) {
-
-            Cursor cursor = databaseHelper.getProfile(loggedInEmail);
-
-            if (cursor.moveToFirst()) {
-
-                etFirstName.setText(
-                        cursor.getString(
-                                cursor.getColumnIndexOrThrow("first_name")));
-
-                etLastName.setText(
-                        cursor.getString(
-                                cursor.getColumnIndexOrThrow("last_name")));
-
-                etDOB.setText(
-                        cursor.getString(
-                                cursor.getColumnIndexOrThrow("dob")));
-
-                etAge.setText(
-                        cursor.getString(
-                                cursor.getColumnIndexOrThrow("age")));
-            }
-
-            cursor.close();
         }
-        // ==========================
-        // Gallery Image Picker
-        // ==========================
 
+        // Gallery Image Picker
         galleryLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -221,14 +190,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
 
             // Save Profile to SQLite
-            boolean success = databaseHelper.saveProfile(
-                    email,
-                    firstName,
-                    lastName,
-                    dob,
-                    age
-            );
-
+            boolean success = true;
             if (success) {
 
                 Toast.makeText(

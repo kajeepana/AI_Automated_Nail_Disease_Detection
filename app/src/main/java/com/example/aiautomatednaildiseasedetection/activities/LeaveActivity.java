@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.aiautomatednaildiseasedetection.R;
 
-public class LogoutDialog extends AppCompatActivity {
+public class LeaveActivity extends AppCompatActivity {
 
     Button btnLogout, btnContinue;
     TextView txtCancel;
@@ -39,12 +39,10 @@ public class LogoutDialog extends AppCompatActivity {
 
         // Logout
         btnLogout.setOnClickListener(v -> {
-
-            Intent intent = new Intent(LogoutDialog.this, LoginActivity.class);
+            Intent intent = new Intent(LeaveActivity.this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             finish();
-
         });
 
         // Cancel
