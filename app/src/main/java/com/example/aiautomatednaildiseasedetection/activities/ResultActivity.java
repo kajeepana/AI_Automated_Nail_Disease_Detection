@@ -15,7 +15,7 @@ public class ResultActivity extends AppCompatActivity {
 
     private ImageView btnBack;
     private ImageView imgResult;
-
+    private Button btnFeedback;
     private TextView txtDiseaseName;
     private TextView txtConfidenceValue;
     private TextView txtSeverityValue;
@@ -51,6 +51,8 @@ public class ResultActivity extends AppCompatActivity {
 
         // Button
         btnUploadAgain = findViewById(R.id.btnUploadAgain);
+
+        btnFeedback = findViewById(R.id.btnFeedback);
 
         //-------------------------------
         // Sample Result
@@ -110,6 +112,15 @@ public class ResultActivity extends AppCompatActivity {
             finish();
 
         });
+        btnFeedback.setOnClickListener(v -> {
 
+            Intent intent = new Intent(
+                    ResultActivity.this,
+                    FeedbackActivity.class
+            );
+
+            startActivity(intent);
+
+        });
     }
 }

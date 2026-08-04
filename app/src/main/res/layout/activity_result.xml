@@ -414,6 +414,19 @@
             android:textSize="17sp"
             android:textStyle="bold"/>
 
+        <Button
+            android:id="@+id/btnFeedback"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="30dp"
+            android:background="@drawable/button_blue"
+            android:text="Give Feedback"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="17sp"
+            android:textStyle="bold"/>
+
     </LinearLayout>
 
 </ScrollView>
