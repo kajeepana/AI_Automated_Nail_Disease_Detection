@@ -9,7 +9,11 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.Manifest;
+import android.content.pm.PackageManager;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -42,6 +46,16 @@ public class UploadImageActivity extends AppCompatActivity {
 
         imgPreview = findViewById(R.id.imgPreview);
 
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[]{Manifest.permission.CAMERA},
+                    100
+            );
+        }
         // Gallery Picker
 
         galleryLauncher = registerForActivityResult(
@@ -88,21 +102,31 @@ public class UploadImageActivity extends AppCompatActivity {
 
         btnCamera.setOnClickListener(v -> {
 
-            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED) {
 
+                ActivityCompat.requestPermissions(
+                        this,
+                        new String[]{Manifest.permission.CAMERA},
+                        100
+                );
+                return;
+            }
+
+            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             cameraLauncher.launch(cameraIntent);
 
         });
-
         // Back Button
 
-        btnBack.setOnClickListener(v -> finish());
-
+        btnBack.setOnClickListener(v -> {
+            finish();
+        });
         // Analyze Button
 
         btnAnalyze.setOnClickListener(v -> {
 
-            // Check if an image has been selected
             if (imageUri == null && imgPreview.getDrawable() == null) {
 
                 Toast.makeText(
@@ -114,13 +138,13 @@ public class UploadImageActivity extends AppCompatActivity {
                 return;
             }
 
-            Toast.makeText(
+            Intent intent = new Intent(
                     UploadImageActivity.this,
-                    "Image uploaded successfully!",
-                    Toast.LENGTH_SHORT
-            ).show();
+                    AnalyzeActivity.class
+            );
+
+            startActivity(intent);
 
         });
-
     }
 }
