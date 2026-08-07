@@ -1,6 +1,8 @@
 package com.example.aiautomatednaildiseasedetection.activities;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,16 +11,26 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
-import android.Manifest;
-import android.content.pm.PackageManager;
 
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.example.aiautomatednaildiseasedetection.R;
+import com.example.aiautomatednaildiseasedetection.api.ApiService;
+import com.example.aiautomatednaildiseasedetection.network.RetrofitClient;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
 
 public class UploadImageActivity extends AppCompatActivity {
 
@@ -31,13 +43,22 @@ public class UploadImageActivity extends AppCompatActivity {
 
     private Uri imageUri;
 
+    private String loggedInEmail;
+
+    private ApiService apiService;
+
     private ActivityResultLauncher<Intent> galleryLauncher;
     private ActivityResultLauncher<Intent> cameraLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload_image);
+
+        apiService = RetrofitClient.getClient().create(ApiService.class);
+
+        loggedInEmail = getIntent().getStringExtra("email");
 
         btnBack = findViewById(R.id.btnBack);
         btnCamera = findViewById(R.id.btnCamera);
@@ -46,7 +67,8 @@ public class UploadImageActivity extends AppCompatActivity {
 
         imgPreview = findViewById(R.id.imgPreview);
 
-        if (ContextCompat.checkSelfPermission(this,
+        if (ContextCompat.checkSelfPermission(
+                this,
                 Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
 
@@ -56,7 +78,6 @@ public class UploadImageActivity extends AppCompatActivity {
                     100
             );
         }
-        // Gallery Picker
 
         galleryLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -77,13 +98,12 @@ public class UploadImageActivity extends AppCompatActivity {
 
             Intent intent = new Intent(
                     Intent.ACTION_PICK,
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+            );
 
             galleryLauncher.launch(intent);
 
         });
-
-        // Camera
 
         cameraLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -92,7 +112,10 @@ public class UploadImageActivity extends AppCompatActivity {
                     if (result.getResultCode() == RESULT_OK &&
                             result.getData() != null) {
 
-                        Bitmap bitmap = (Bitmap) result.getData().getExtras().get("data");
+                        Bitmap bitmap =
+                                (Bitmap) result.getData()
+                                        .getExtras()
+                                        .get("data");
 
                         imgPreview.setImageBitmap(bitmap);
 
@@ -102,49 +125,133 @@ public class UploadImageActivity extends AppCompatActivity {
 
         btnCamera.setOnClickListener(v -> {
 
-            if (ContextCompat.checkSelfPermission(this,
-                    Manifest.permission.CAMERA)
-                    != PackageManager.PERMISSION_GRANTED) {
+            Intent intent =
+                    new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-                ActivityCompat.requestPermissions(
-                        this,
-                        new String[]{Manifest.permission.CAMERA},
-                        100
-                );
-                return;
-            }
-
-            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            cameraLauncher.launch(cameraIntent);
+            cameraLauncher.launch(intent);
 
         });
-        // Back Button
 
-        btnBack.setOnClickListener(v -> {
-            finish();
-        });
-        // Analyze Button
-
+        btnBack.setOnClickListener(v -> finish());
         btnAnalyze.setOnClickListener(v -> {
-
-            if (imageUri == null && imgPreview.getDrawable() == null) {
-
-                Toast.makeText(
-                        UploadImageActivity.this,
-                        "Please select or capture an image first.",
-                        Toast.LENGTH_SHORT
-                ).show();
-
-                return;
-            }
 
             Intent intent = new Intent(
                     UploadImageActivity.this,
                     AnalyzeActivity.class
             );
 
+            intent.putExtra("email", loggedInEmail);
+
             startActivity(intent);
 
         });
+
+
+
     }
+
+    private void uploadImage() {
+
+        try {
+
+            InputStream inputStream = getContentResolver().openInputStream(imageUri);
+
+            File file = new File(getCacheDir(), "upload_image.jpg");
+
+            FileOutputStream outputStream = new FileOutputStream(file);
+
+            byte[] buffer = new byte[4096];
+
+            int bytesRead;
+
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+
+            outputStream.close();
+            inputStream.close();
+
+            RequestBody requestFile =
+                    RequestBody.create(
+                            file,
+                            MediaType.parse("image/*")
+                    );
+
+            MultipartBody.Part body =
+                    MultipartBody.Part.createFormData(
+                            "file",
+                            file.getName(),
+                            requestFile
+                    );
+
+            RequestBody email =
+                    RequestBody.create(
+                            loggedInEmail,
+                            MediaType.parse("text/plain")
+                    );
+
+            apiService.uploadImage(body, email)
+                    .enqueue(new retrofit2.Callback<String>() {
+
+                        @Override
+                        public void onResponse(Call<String> call,
+                                               retrofit2.Response<String> response) {
+
+                            if (response.isSuccessful()) {
+
+                                Toast.makeText(
+                                        UploadImageActivity.this,
+                                        "Image Uploaded Successfully",
+                                        Toast.LENGTH_SHORT
+                                ).show();
+
+                                Intent intent = new Intent(
+                                        UploadImageActivity.this,
+                                        AnalyzeActivity.class
+                                );
+
+                                intent.putExtra("email", loggedInEmail);
+
+                                startActivity(intent);
+
+                            } else {
+
+                                Toast.makeText(
+                                        UploadImageActivity.this,
+                                        "Error Code : " + response.code(),
+                                        Toast.LENGTH_LONG
+                                ).show();
+
+                            }
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<String> call,
+                                              Throwable t) {
+
+                            Toast.makeText(
+                                    UploadImageActivity.this,
+                                    t.getMessage(),
+                                    Toast.LENGTH_LONG
+                            ).show();
+
+                        }
+
+                    });
+
+        } catch (IOException e) {
+
+            e.printStackTrace();
+
+            Toast.makeText(
+                    this,
+                    "Unable to read selected image",
+                    Toast.LENGTH_SHORT
+            ).show();
+
+        }
+
+    }
+
 }

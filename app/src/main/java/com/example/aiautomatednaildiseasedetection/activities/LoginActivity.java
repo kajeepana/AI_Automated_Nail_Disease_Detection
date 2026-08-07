@@ -12,6 +12,13 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.aiautomatednaildiseasedetection.R;
+import com.example.aiautomatednaildiseasedetection.api.ApiService;
+import com.example.aiautomatednaildiseasedetection.model.User;
+import com.example.aiautomatednaildiseasedetection.network.RetrofitClient;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -19,10 +26,14 @@ public class LoginActivity extends AppCompatActivity {
     private Button btnLogin, btnRegister;
     private TextView txtForgot;
 
+    private ApiService apiService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        apiService = RetrofitClient.getClient().create(ApiService.class);
 
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
@@ -57,38 +68,73 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
 
-            // TODO: Retrofit Login API will be added later
+            User user = new User();
+            user.setEmail(email);
+            user.setPassword(password);
 
-            Toast.makeText(
-                    LoginActivity.this,
-                    "Login Successful!",
-                    Toast.LENGTH_SHORT
-            ).show();
+            apiService.loginUser(user).enqueue(new Callback<User>() {
+
+                @Override
+                public void onResponse(Call<User> call, Response<User> response) {
+
+                    if (response.isSuccessful() && response.body() != null) {
+
+                        Toast.makeText(
+                                LoginActivity.this,
+                                "Login Successful!",
+                                Toast.LENGTH_SHORT
+                        ).show();
+
+                        Intent intent = new Intent(
+                                LoginActivity.this,
+                                ProfileActivity.class
+                        );
+
+                        intent.putExtra("email", response.body().getEmail());
+                        intent.putExtra("firstName", response.body().getFirstName());
+                        intent.putExtra("lastName", response.body().getLastName());
+
+                        startActivity(intent);
+                        finish();
+
+                    } else {
+
+                        Toast.makeText(
+                                LoginActivity.this,
+                                "Invalid Email or Password",
+                                Toast.LENGTH_SHORT
+                        ).show();
+
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<User> call, Throwable t) {
+
+                    Toast.makeText(
+                            LoginActivity.this,
+                            "Error : " + t.getMessage(),
+                            Toast.LENGTH_LONG
+                    ).show();
+
+                }
+            });
+
+        });
+
+
+        btnRegister.setOnClickListener(v -> {
 
             Intent intent = new Intent(
                     LoginActivity.this,
-                    ProfileActivity.class
+                    RegisterActivity.class
             );
 
-            intent.putExtra("email", email);
-
             startActivity(intent);
-            finish();
 
         });
 
-        // Register Button
-        btnRegister.setOnClickListener(v -> {
 
-            Toast.makeText(
-                    LoginActivity.this,
-                    "Register Screen Coming Soon",
-                    Toast.LENGTH_SHORT
-            ).show();
-
-        });
-
-        // Forgot Password
         txtForgot.setOnClickListener(v -> {
 
             Toast.makeText(

@@ -19,13 +19,15 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical">
 
-            <ImageView
+            <ImageButton
                 android:id="@+id/btnBack"
-                android:layout_width="26dp"
-                android:layout_height="26dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@android:color/transparent"
                 android:src="@drawable/ic_back"
-                android:padding="2dp"/>
-
+                android:padding="10dp"
+                android:clickable="true"
+                android:focusable="true"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

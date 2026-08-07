@@ -1,8 +1,8 @@
 package com.example.aiautomatednaildiseasedetection.activities;
 
+
 import android.app.DatePickerDialog;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -19,8 +19,15 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.aiautomatednaildiseasedetection.R;
+import com.example.aiautomatednaildiseasedetection.api.ApiService;
+import com.example.aiautomatednaildiseasedetection.model.User;
+import com.example.aiautomatednaildiseasedetection.network.RetrofitClient;
 
 import java.util.Calendar;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -39,6 +46,7 @@ public class ProfileActivity extends AppCompatActivity {
     private Button btnSkip;
 
     private String loggedInEmail;
+    private ApiService apiService;
 
     private ActivityResultLauncher<Intent> galleryLauncher;
 
@@ -46,6 +54,8 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
+        apiService = RetrofitClient.getClient().create(ApiService.class);
 
         // Logged in email
         loggedInEmail = getIntent().getStringExtra("email");

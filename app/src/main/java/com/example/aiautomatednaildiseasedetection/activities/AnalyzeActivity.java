@@ -9,13 +9,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.aiautomatednaildiseasedetection.R;
 
 public class AnalyzeActivity extends AppCompatActivity {
+    private String loggedInEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_analyze);
+        loggedInEmail = getIntent().getStringExtra("email");
 
-        // Show loading screen for 4 seconds
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {

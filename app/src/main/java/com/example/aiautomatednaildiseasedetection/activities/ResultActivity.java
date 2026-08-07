@@ -1,4 +1,5 @@
 package com.example.aiautomatednaildiseasedetection.activities;
+import android.widget.ImageButton;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,7 +14,7 @@ import com.example.aiautomatednaildiseasedetection.R;
 
 public class ResultActivity extends AppCompatActivity {
 
-    private ImageView btnBack;
+    private ImageButton btnBack;
     private ImageView imgResult;
     private Button btnFeedback;
     private TextView txtDiseaseName;
@@ -26,37 +27,37 @@ public class ResultActivity extends AppCompatActivity {
     private ProgressBar progressSeverity;
 
     private Button btnUploadAgain;
+    private String loggedInEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
+        loggedInEmail = getIntent().getStringExtra("email");
 
-        // Image
+
         imgResult = findViewById(R.id.imgResult);
 
-        // Back Button
+
         btnBack = findViewById(R.id.btnBack);
 
-        // TextViews
+
         txtDiseaseName = findViewById(R.id.txtDiseaseName);
         txtConfidenceValue = findViewById(R.id.txtConfidenceValue);
         txtSeverityValue = findViewById(R.id.txtSeverityValue);
         txtSeverity = findViewById(R.id.txtSeverity);
         txtDescription = findViewById(R.id.txtDescription);
 
-        // Progress Bars
+
         progressConfidence = findViewById(R.id.progressConfidence);
         progressSeverity = findViewById(R.id.progressSeverity);
 
-        // Button
+
         btnUploadAgain = findViewById(R.id.btnUploadAgain);
 
         btnFeedback = findViewById(R.id.btnFeedback);
 
-        //-------------------------------
-        // Sample Result
-        //-------------------------------
+
 
         String disease = "Nail Psoriasis";
         int confidence = 92;
@@ -90,15 +91,24 @@ public class ResultActivity extends AppCompatActivity {
                         "%. Please consult a dermatologist for confirmation."
         );
 
-        //-------------------------------
-        // Back Button
-        //-------------------------------
 
-        btnBack.setOnClickListener(v -> finish());
 
-        //-------------------------------
-        // Upload Another Image
-        //-------------------------------
+        btnBack.setOnClickListener(v -> {
+
+            Intent intent = new Intent(
+                    ResultActivity.this,
+                    UploadImageActivity.class
+            );
+
+            intent.putExtra("email", loggedInEmail);
+
+            startActivity(intent);
+
+            finish();
+
+        });
+
+
 
         btnUploadAgain.setOnClickListener(v -> {
 
@@ -119,8 +129,14 @@ public class ResultActivity extends AppCompatActivity {
                     FeedbackActivity.class
             );
 
+            intent.putExtra("email", loggedInEmail);
+
             startActivity(intent);
 
         });
+
+
+
+
     }
 }
