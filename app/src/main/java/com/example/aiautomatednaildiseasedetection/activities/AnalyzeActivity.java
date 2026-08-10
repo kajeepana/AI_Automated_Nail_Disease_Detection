@@ -28,8 +28,10 @@ public class AnalyzeActivity extends AppCompatActivity {
                         ResultActivity.class
                 );
 
-                startActivity(intent);
+                intent.putExtra("email", loggedInEmail);
+                intent.putExtra("analysisId", 1L);
 
+                startActivity(intent);
                 // Close AnalysisActivity
                 finish();
             }

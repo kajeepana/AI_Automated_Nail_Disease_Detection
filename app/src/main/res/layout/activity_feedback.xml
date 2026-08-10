@@ -74,22 +74,35 @@
                 android:maxLines="8"
                 android:textColor="#222222"
                 android:textColorHint="#B0B0B0"/>
+            <!-- Rating Label -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:text="RATING"
+                android:textStyle="bold"
+                android:textSize="12sp"
+                android:textColor="#9E9E9E" />
+
+            <!-- Rating -->
+            <RatingBar
+                android:id="@+id/ratingBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:numStars="5"
+                android:stepSize="1"
+                android:rating="5" />
 
             <!-- Submit Button -->
--
             <Button
                 android:id="@+id/btnSubmit"
-                android:layout_width="317dp"
-                android:layout_height="55dp"
-                android:layout_marginTop="24dp"
-                android:background="@drawable/button_blue"
-                android:drawableStart="@drawable/ic_send"
-                android:drawablePadding="10dp"
-                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="20dp"
                 android:text="Submit"
-                android:textAllCaps="false"
-                android:textColor="#FFFFFF"
-                android:textStyle="bold" />
+                android:textAllCaps="false" />
+
 
             <!-- Cancel -->
 

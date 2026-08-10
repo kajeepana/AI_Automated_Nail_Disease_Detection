@@ -44,6 +44,8 @@ public class ProfileActivity extends AppCompatActivity {
     private Button btnChoosePhoto;
     private Button btnSave;
     private Button btnSkip;
+    private Button btnLogout;
+    private Button btnHistory;
 
     private String loggedInEmail;
     private ApiService apiService;
@@ -74,8 +76,10 @@ public class ProfileActivity extends AppCompatActivity {
 
         btnSave = findViewById(R.id.btnSave);
         btnSkip = findViewById(R.id.btnSkip);
+        btnLogout = findViewById(R.id.btnLogout);
+        btnHistory = findViewById(R.id.btnHistory);
 
-        // Show logged in email
+
         if (loggedInEmail != null) {
             etEmail.setText(loggedInEmail);
         }
@@ -110,15 +114,11 @@ public class ProfileActivity extends AppCompatActivity {
 
         });
 
-        // ==========================
-        // Back Button
-        // ==========================
+
 
         btnBack.setOnClickListener(v -> finish());
 
-        // ==========================
-        // Date Picker
-        // ==========================
+
 
         etDOB.setOnClickListener(v -> {
 
@@ -156,9 +156,7 @@ public class ProfileActivity extends AppCompatActivity {
             datePickerDialog.show();
 
         });
-        // ==========================
-        // Save Button
-        // ==========================
+
 
         btnSave.setOnClickListener(v -> {
 
@@ -168,7 +166,7 @@ public class ProfileActivity extends AppCompatActivity {
             String dob = etDOB.getText().toString().trim();
             String age = etAge.getText().toString().trim();
 
-            // Validation
+
             if (TextUtils.isEmpty(firstName)) {
                 etFirstName.setError("Enter First Name");
                 etFirstName.requestFocus();
@@ -232,9 +230,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         });
 
-        // ==========================
-        // Skip Button
-        // ==========================
+
 
         btnSkip.setOnClickListener(v -> {
 
@@ -249,6 +245,27 @@ public class ProfileActivity extends AppCompatActivity {
 
             finish();
 
+        });
+        btnLogout.setOnClickListener(v -> {
+
+            Intent intent = new Intent(
+                    ProfileActivity.this,
+                    LeaveActivity.class
+            );
+
+            startActivity(intent);
+
+        });
+        btnHistory.setOnClickListener(v -> {
+
+            Intent intent = new Intent(
+                    ProfileActivity.this,
+                    AnalysisHistoryActivity.class
+            );
+
+            intent.putExtra("email", loggedInEmail);
+
+            startActivity(intent);
         });
 
     }

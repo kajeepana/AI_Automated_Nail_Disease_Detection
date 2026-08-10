@@ -15,7 +15,7 @@
         android:paddingTop="6dp"
         android:paddingBottom="6dp">
 
-        <!-- Header -->
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -42,7 +42,7 @@
 
         </LinearLayout>
 
-        <!-- Profile Image -->
+
 
         <ImageView
             android:id="@+id/imgProfile"
@@ -87,7 +87,7 @@
             android:textColor="#666666"
             android:textSize="10sp" />
 
-        <!-- First Name -->
+
 
         <TextView
             android:layout_width="wrap_content"
@@ -108,7 +108,7 @@
             android:paddingHorizontal="12dp"
             android:textSize="14sp" />
 
-        <!-- Last Name -->
+
 
         <TextView
             android:layout_width="wrap_content"
@@ -129,7 +129,7 @@
             android:paddingHorizontal="12dp"
             android:textSize="14sp" />
 
-        <!-- Email -->
+
 
         <TextView
             android:layout_width="wrap_content"
@@ -151,7 +151,7 @@
             android:paddingHorizontal="12dp"
             android:textSize="14sp" />
 
-        <!-- Date of Birth -->
+
 
         <TextView
             android:layout_width="wrap_content"
@@ -176,7 +176,7 @@
             android:paddingHorizontal="12dp"
             android:textSize="14sp" />
 
-        <!-- Age -->
+
 
         <TextView
             android:layout_width="wrap_content"
@@ -198,7 +198,7 @@
             android:paddingHorizontal="12dp"
             android:textSize="14sp" />
 
-        <!-- Save Button -->
+
 
         <Button
             android:id="@+id/btnSave"
@@ -213,7 +213,7 @@
             android:textSize="15sp"
             android:textStyle="bold" />
 
-        <!-- Skip Button -->
+
 
         <Button
             android:id="@+id/btnSkip"
@@ -225,6 +225,30 @@
             android:text="Skip for now"
             android:textAllCaps="false"
             android:textColor="#142A86"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+        <Button
+            android:id="@+id/btnHistory"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/button_white"
+            android:backgroundTint="@null"
+            android:text="Analysis History"
+            android:textAllCaps="false"
+            android:textColor="#142A86"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+        <Button
+            android:id="@+id/btnLogout"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/button_white"
+            android:backgroundTint="@null"
+            android:text="Log Out"
+            android:textAllCaps="false"
+            android:textColor="#D32F2F"
             android:textSize="15sp"
             android:textStyle="bold" />
 
