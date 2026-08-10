@@ -9,32 +9,56 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.aiautomatednaildiseasedetection.R;
 
 public class AnalyzeActivity extends AppCompatActivity {
+
     private String loggedInEmail;
+    private Long analysisId;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_analyze);
-        loggedInEmail = getIntent().getStringExtra("email");
 
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
+        loggedInEmail =
+                getIntent().getStringExtra("email");
 
-                // Open Result Screen
-                Intent intent = new Intent(
-                        AnalyzeActivity.this,
-                        ResultActivity.class
+
+        analysisId =
+                getIntent().getLongExtra(
+                        "analysisId",
+                        -1L
                 );
 
-                intent.putExtra("email", loggedInEmail);
-                intent.putExtra("analysisId", 1L);
 
-                startActivity(intent);
-                // Close AnalysisActivity
-                finish();
-            }
-        }, 4000); // 4 seconds
+        new Handler().postDelayed(() -> {
+
+            Intent intent =
+                    new Intent(
+                            AnalyzeActivity.this,
+                            ResultActivity.class
+                    );
+
+
+            intent.putExtra(
+                    "email",
+                    loggedInEmail
+            );
+
+
+            intent.putExtra(
+                    "analysisId",
+                    analysisId
+            );
+
+
+            startActivity(intent);
+
+
+            finish();
+
+        }, 4000);
     }
 }
