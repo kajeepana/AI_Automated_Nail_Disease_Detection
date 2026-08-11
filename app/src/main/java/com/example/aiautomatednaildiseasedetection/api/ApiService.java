@@ -4,6 +4,9 @@ import com.example.aiautomatednaildiseasedetection.model.Feedback;
 import com.example.aiautomatednaildiseasedetection.model.NailAnalysis;
 import com.example.aiautomatednaildiseasedetection.model.Upload;
 import com.example.aiautomatednaildiseasedetection.model.User;
+import com.example.aiautomatednaildiseasedetection.dto.ForgotPasswordRequest;
+import com.example.aiautomatednaildiseasedetection.dto.VerifyOtpRequest;
+import com.example.aiautomatednaildiseasedetection.dto.ResetPasswordRequest;
 
 import java.util.List;
 
@@ -33,6 +36,20 @@ public interface ApiService {
     @POST("api/users/profile")
     Call<User> updateProfile(@Body User user);
 
+    // FORGOT PASSWORD
+    @POST("api/users/forgot-password")
+    Call<String> forgotPassword(
+            @Body ForgotPasswordRequest request
+    );
+    @POST("api/users/verify-otp")
+    Call<String> verifyOtp(
+            @Body VerifyOtpRequest request
+    );
+    // RESET PASSWORD
+    @POST("api/users/reset-password")
+    Call<String> resetPassword(
+            @Body ResetPasswordRequest request
+    );
 
     // =========================
     // UPLOAD
@@ -84,4 +101,5 @@ public interface ApiService {
     Call<List<NailAnalysis>> getAnalysesByEmail(
             @Path("email") String email
     );
+
 }

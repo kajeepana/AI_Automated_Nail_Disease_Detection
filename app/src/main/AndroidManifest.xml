@@ -27,6 +27,15 @@
         <activity android:name=".activities.FeedbackActivity" />
         <activity android:name=".activities.LeaveActivity" />
         <activity
+            android:name=".activities.ForgotPasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.VerifyOtpActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ResetPasswordActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.SplashActivity"
             android:exported="true">
             <intent-filter>
@@ -35,6 +44,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".activities.AnalysisHistoryActivity"
             android:exported="false"
