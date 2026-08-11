@@ -5,6 +5,7 @@ public class User {
     private Long id;
     private String firstName;
     private String lastName;
+    private String professionalId;
     private String email;
     private String dob;
     private Integer age;
@@ -37,6 +38,14 @@ public class User {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getProfessionalId() {
+        return professionalId;
+    }
+
+    public void setProfessionalId(String professionalId) {
+        this.professionalId = professionalId;
     }
 
     public String getEmail() {

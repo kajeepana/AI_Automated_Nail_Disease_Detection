@@ -19,7 +19,7 @@ import com.example.aiautomatednaildiseasedetection.R;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private EditText etFullName, etEmail, etPassword, etConfirmPassword;
+    private EditText etFullName, etProfessionalId, etEmail, etPassword, etConfirmPassword;
     private Button btnCreateAccount, txtLogin;
     private ApiService apiService;
 
@@ -30,6 +30,7 @@ public class RegisterActivity extends AppCompatActivity {
         apiService = RetrofitClient.getClient().create(ApiService.class);
 
         etFullName = findViewById(R.id.etFullName);
+        etProfessionalId = findViewById(R.id.etProfessionalId);
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
         etConfirmPassword = findViewById(R.id.etConfirmPassword);
@@ -41,6 +42,7 @@ public class RegisterActivity extends AppCompatActivity {
         btnCreateAccount.setOnClickListener(view -> {
 
             String fullName = etFullName.getText().toString().trim();
+            String professionalId = etProfessionalId.getText().toString().trim();
             String email = etEmail.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
             String confirmPassword = etConfirmPassword.getText().toString().trim();
@@ -49,6 +51,12 @@ public class RegisterActivity extends AppCompatActivity {
             if (TextUtils.isEmpty(fullName)) {
                 etFullName.setError("Enter your full name");
                 etFullName.requestFocus();
+                return;
+            }
+
+            if (TextUtils.isEmpty(professionalId)) {
+                etProfessionalId.setError("Enter your Professional ID");
+                etProfessionalId.requestFocus();
                 return;
             }
 
@@ -90,6 +98,7 @@ public class RegisterActivity extends AppCompatActivity {
                 user.setLastName("User");
             }
 
+            user.setProfessionalId(professionalId);
             user.setEmail(email);
             user.setPassword(password);
             user.setRole("USER");
