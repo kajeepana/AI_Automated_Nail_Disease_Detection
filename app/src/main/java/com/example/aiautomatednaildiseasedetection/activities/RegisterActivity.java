@@ -72,6 +72,27 @@ public class RegisterActivity extends AppCompatActivity {
                 return;
             }
 
+            if (password.length() < 8) {
+                etPassword.setError("Password must be at least 8 characters");
+                etPassword.requestFocus();
+                return;
+            }
+            if (!password.matches(".*[A-Za-z].*")) {
+                etPassword.setError(
+                        "Password must contain at least one letter"
+                );
+                etPassword.requestFocus();
+                return;
+            }
+
+            if (!password.matches(".*[0-9].*")) {
+                etPassword.setError(
+                        "Password must contain at least one number"
+                );
+                etPassword.requestFocus();
+                return;
+            }
+
             if (TextUtils.isEmpty(confirmPassword)) {
                 etConfirmPassword.setError("Confirm your password");
                 etConfirmPassword.requestFocus();
