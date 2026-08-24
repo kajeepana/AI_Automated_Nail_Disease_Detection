@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.aiautomatednaildiseasedetection.R;
 import com.example.aiautomatednaildiseasedetection.api.ApiService;
+import com.example.aiautomatednaildiseasedetection.model.LoginRequest;
 import com.example.aiautomatednaildiseasedetection.model.User;
 import com.example.aiautomatednaildiseasedetection.network.RetrofitClient;
 
@@ -31,10 +32,13 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_login);
 
+        // Initialize Retrofit API
         apiService = RetrofitClient.getClient().create(ApiService.class);
 
+        // Find Views
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
 
@@ -43,85 +47,117 @@ public class LoginActivity extends AppCompatActivity {
 
         txtForgot = findViewById(R.id.txtForgot);
 
-        // Login Button
+        // =========================
+        // LOGIN BUTTON
+        // =========================
+
         btnLogin.setOnClickListener(v -> {
 
             String email = etEmail.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
 
-            // Validation
+            // Email empty validation
             if (TextUtils.isEmpty(email)) {
+
                 etEmail.setError("Enter Email");
                 etEmail.requestFocus();
                 return;
             }
 
+            // Email format validation
             if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+
                 etEmail.setError("Enter Valid Email");
                 etEmail.requestFocus();
                 return;
             }
 
+            // Password empty validation
             if (TextUtils.isEmpty(password)) {
+
                 etPassword.setError("Enter Password");
                 etPassword.requestFocus();
                 return;
             }
 
-            User user = new User();
-            user.setEmail(email);
-            user.setPassword(password);
+            // Create LoginRequest
+            LoginRequest loginRequest =
+                    new LoginRequest(email, password);
 
-            apiService.loginUser(user).enqueue(new Callback<User>() {
+            // Send Login Request
+            apiService.loginUser(loginRequest)
+                    .enqueue(new Callback<User>() {
 
-                @Override
-                public void onResponse(Call<User> call, Response<User> response) {
+                        @Override
+                        public void onResponse(
+                                Call<User> call,
+                                Response<User> response) {
 
-                    if (response.isSuccessful() && response.body() != null) {
+                            if (response.isSuccessful()
+                                    && response.body() != null) {
 
-                        Toast.makeText(
-                                LoginActivity.this,
-                                "Login Successful!",
-                                Toast.LENGTH_SHORT
-                        ).show();
+                                User user = response.body();
 
-                        Intent intent = new Intent(
-                                LoginActivity.this,
-                                ProfileActivity.class
-                        );
+                                Toast.makeText(
+                                        LoginActivity.this,
+                                        "Login Successful!",
+                                        Toast.LENGTH_SHORT
+                                ).show();
 
-                        intent.putExtra("email", response.body().getEmail());
-                        intent.putExtra("firstName", response.body().getFirstName());
-                        intent.putExtra("lastName", response.body().getLastName());
+                                // Go to Profile Activity
+                                Intent intent = new Intent(
+                                        LoginActivity.this,
+                                        ProfileActivity.class
+                                );
 
-                        startActivity(intent);
-                        finish();
+                                // Send user details
+                                intent.putExtra(
+                                        "email",
+                                        user.getEmail()
+                                );
 
-                    } else {
+                                intent.putExtra(
+                                        "firstName",
+                                        user.getFirstName()
+                                );
 
-                        Toast.makeText(
-                                LoginActivity.this,
-                                "Invalid Email or Password",
-                                Toast.LENGTH_SHORT
-                        ).show();
+                                intent.putExtra(
+                                        "lastName",
+                                        user.getLastName()
+                                );
 
-                    }
-                }
+                                startActivity(intent);
 
-                @Override
-                public void onFailure(Call<User> call, Throwable t) {
+                                finish();
 
-                    Toast.makeText(
-                            LoginActivity.this,
-                            "Error : " + t.getMessage(),
-                            Toast.LENGTH_LONG
-                    ).show();
+                            } else {
 
-                }
-            });
+                                Toast.makeText(
+                                        LoginActivity.this,
+                                        "Invalid Email or Password",
+                                        Toast.LENGTH_SHORT
+                                ).show();
+                            }
+                        }
 
+                        @Override
+                        public void onFailure(
+                                Call<User> call,
+                                Throwable t) {
+
+                            Toast.makeText(
+                                    LoginActivity.this,
+                                    "Error: " + t.getMessage(),
+                                    Toast.LENGTH_LONG
+                            ).show();
+                        }
+                    });
         });
 
+
+        // =========================
+        // REGISTER BUTTON
+        // =========================
 
         btnRegister.setOnClickListener(v -> {
 
@@ -131,9 +167,12 @@ public class LoginActivity extends AppCompatActivity {
             );
 
             startActivity(intent);
-
         });
 
+
+        // =========================
+        // FORGOT PASSWORD
+        // =========================
 
         txtForgot.setOnClickListener(v -> {
 
@@ -143,8 +182,6 @@ public class LoginActivity extends AppCompatActivity {
             );
 
             startActivity(intent);
-
         });
-
     }
 }

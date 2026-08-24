@@ -28,65 +28,132 @@ public class VerifyOtpActivity extends AppCompatActivity {
 
     private String email;
 
+    // This tells us whether OTP came from Registration
+    private boolean fromRegister;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_verify_otp);
 
-        // Initialize API
-        apiService = RetrofitClient
-                .getClient()
-                .create(ApiService.class);
 
-        // Find views
-        etOtp = findViewById(R.id.etOtp);
-        btnVerifyOtp = findViewById(R.id.btnVerifyOtp);
-        txtBackToForgot = findViewById(R.id.txtBackToForgot);
+        // =========================
+        // INITIALIZE API
+        // =========================
 
-        // Get email from ForgotPasswordActivity
-        email = getIntent().getStringExtra("email");
+        apiService =
+                RetrofitClient
+                        .getClient()
+                        .create(ApiService.class);
 
 
         // =========================
-        // VERIFY OTP
+        // FIND XML VIEWS
+        // =========================
+
+        etOtp =
+                findViewById(R.id.etOtp);
+
+        btnVerifyOtp =
+                findViewById(R.id.btnVerifyOtp);
+
+        txtBackToForgot =
+                findViewById(R.id.txtBackToForgot);
+
+
+        // =========================
+        // GET EMAIL
+        // =========================
+
+        email =
+                getIntent()
+                        .getStringExtra("email");
+
+
+        // =========================
+        // CHECK OTP SOURCE
+        // =========================
+
+        fromRegister =
+                getIntent()
+                        .getBooleanExtra(
+                                "fromRegister",
+                                false
+                        );
+
+
+        // =========================
+        // CHECK EMAIL
+        // =========================
+
+        if (email == null
+                || email.trim().isEmpty()) {
+
+            Toast.makeText(
+                    VerifyOtpActivity.this,
+                    "Email not found",
+                    Toast.LENGTH_LONG
+            ).show();
+
+            finish();
+
+            return;
+        }
+
+
+        // =========================
+        // VERIFY OTP BUTTON
         // =========================
 
         btnVerifyOtp.setOnClickListener(v -> {
 
-            String otp = etOtp.getText()
-                    .toString()
-                    .trim();
+
+            String otp =
+                    etOtp
+                            .getText()
+                            .toString()
+                            .trim();
+
+
+            // =========================
+            // OTP EMPTY
+            // =========================
 
             if (otp.isEmpty()) {
 
-                etOtp.setError("Enter OTP");
+                etOtp.setError(
+                        "Enter OTP"
+                );
+
                 etOtp.requestFocus();
 
                 return;
             }
+
+
+            // =========================
+            // OTP LENGTH
+            // =========================
 
             if (otp.length() != 6) {
 
-                etOtp.setError("Enter 6-digit OTP");
+                etOtp.setError(
+                        "Enter 6-digit OTP"
+                );
+
                 etOtp.requestFocus();
 
                 return;
             }
 
-            if (email == null || email.isEmpty()) {
 
-                Toast.makeText(
-                        VerifyOtpActivity.this,
-                        "Email not found",
-                        Toast.LENGTH_LONG
-                ).show();
+            // =========================
+            // CREATE REQUEST
+            // =========================
 
-                return;
-            }
-
-
-            // Create request
             VerifyOtpRequest request =
                     new VerifyOtpRequest(
                             email,
@@ -94,7 +161,16 @@ public class VerifyOtpActivity extends AppCompatActivity {
                     );
 
 
-            // Call backend
+            // Disable button
+            // while API is running
+
+            btnVerifyOtp.setEnabled(false);
+
+
+            // =========================
+            // CALL BACKEND
+            // =========================
+
             apiService
                     .verifyOtp(request)
                     .enqueue(new Callback<String>() {
@@ -104,7 +180,19 @@ public class VerifyOtpActivity extends AppCompatActivity {
                                 Call<String> call,
                                 Response<String> response) {
 
+
+                            // Enable button again
+
+                            btnVerifyOtp
+                                    .setEnabled(true);
+
+
+                            // =========================
+                            // OTP SUCCESS
+                            // =========================
+
                             if (response.isSuccessful()) {
+
 
                                 Toast.makeText(
                                         VerifyOtpActivity.this,
@@ -113,41 +201,101 @@ public class VerifyOtpActivity extends AppCompatActivity {
                                 ).show();
 
 
-                                // Go to Reset Password screen
-                                Intent intent =
-                                        new Intent(
-                                                VerifyOtpActivity.this,
-                                                ResetPasswordActivity.class
-                                        );
+                                // ==================================
+                                // REGISTRATION OTP
+                                // ==================================
 
-                                intent.putExtra(
-                                        "email",
-                                        email
-                                );
+                                if (fromRegister) {
 
-                                startActivity(intent);
+
+                                    Intent intent =
+                                            new Intent(
+                                                    VerifyOtpActivity.this,
+                                                    LoginActivity.class
+                                            );
+
+
+                                    // Send email to LoginActivity
+
+                                    intent.putExtra(
+                                            "email",
+                                            email
+                                    );
+
+
+                                    startActivity(intent);
+
+
+                                }
+
+                                // ==================================
+                                // FORGOT PASSWORD OTP
+                                // ==================================
+
+                                else {
+
+
+                                    Intent intent =
+                                            new Intent(
+                                                    VerifyOtpActivity.this,
+                                                    ResetPasswordActivity.class
+                                            );
+
+
+                                    // Send email to Reset Password
+
+                                    intent.putExtra(
+                                            "email",
+                                            email
+                                    );
+
+
+                                    startActivity(intent);
+                                }
+
 
                                 finish();
 
-                            } else {
+
+                            }
+
+                            // =========================
+                            // OTP FAILED
+                            // =========================
+
+                            else {
+
 
                                 String errorMessage =
                                         "Invalid or expired OTP";
 
-                                if (response.errorBody() != null) {
+
+                                if (response.errorBody()
+                                        != null) {
 
                                     try {
 
-                                        errorMessage =
+                                        String serverMessage =
                                                 response
                                                         .errorBody()
                                                         .string();
+
+
+                                        if (serverMessage != null
+                                                && !serverMessage
+                                                .trim()
+                                                .isEmpty()) {
+
+                                            errorMessage =
+                                                    serverMessage;
+                                        }
 
                                     } catch (Exception e) {
 
                                         e.printStackTrace();
                                     }
                                 }
+
 
                                 Toast.makeText(
                                         VerifyOtpActivity.this,
@@ -158,10 +306,19 @@ public class VerifyOtpActivity extends AppCompatActivity {
                         }
 
 
+                        // =========================
+                        // CONNECTION ERROR
+                        // =========================
+
                         @Override
                         public void onFailure(
                                 Call<String> call,
                                 Throwable t) {
+
+
+                            btnVerifyOtp
+                                    .setEnabled(true);
+
 
                             Toast.makeText(
                                     VerifyOtpActivity.this,
@@ -175,12 +332,13 @@ public class VerifyOtpActivity extends AppCompatActivity {
 
 
         // =========================
-        // BACK
+        // BACK BUTTON
         // =========================
 
         txtBackToForgot.setOnClickListener(v -> {
 
             finish();
+
         });
     }
 }

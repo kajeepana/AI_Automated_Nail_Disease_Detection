@@ -63,19 +63,27 @@ public class UploadImageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_upload_image);
 
 
-        // Retrofit
-        apiService =
-                RetrofitClient
-                        .getClient()
-                        .create(ApiService.class);
+        // ==========================================
+        // RETROFIT
+        // ==========================================
+
+        apiService = RetrofitClient
+                .getClient()
+                .create(ApiService.class);
 
 
-        // Get logged in email
+        // ==========================================
+        // GET EMAIL
+        // ==========================================
+
         loggedInEmail =
                 getIntent().getStringExtra("email");
 
 
-        // Find views
+        // ==========================================
+        // FIND VIEWS
+        // ==========================================
+
         btnBack = findViewById(R.id.btnBack);
         btnCamera = findViewById(R.id.btnCamera);
         btnGallery = findViewById(R.id.btnGallery);
@@ -84,9 +92,9 @@ public class UploadImageActivity extends AppCompatActivity {
         imgPreview = findViewById(R.id.imgPreview);
 
 
-        // =========================
+        // ==========================================
         // CAMERA PERMISSION
-        // =========================
+        // ==========================================
 
         if (ContextCompat.checkSelfPermission(
                 this,
@@ -95,15 +103,17 @@ public class UploadImageActivity extends AppCompatActivity {
 
             ActivityCompat.requestPermissions(
                     this,
-                    new String[]{Manifest.permission.CAMERA},
+                    new String[]{
+                            Manifest.permission.CAMERA
+                    },
                     100
             );
         }
 
 
-        // =========================
+        // ==========================================
         // GALLERY
-        // =========================
+        // ==========================================
 
         galleryLauncher =
                 registerForActivityResult(
@@ -113,35 +123,50 @@ public class UploadImageActivity extends AppCompatActivity {
                             if (result.getResultCode() == RESULT_OK
                                     && result.getData() != null) {
 
-                                imageUri =
+                                Uri selectedUri =
                                         result.getData().getData();
 
-                                if (imageUri != null) {
+                                if (selectedUri != null) {
+
+                                    imageUri = selectedUri;
 
                                     imgPreview.setImageURI(
                                             imageUri
                                     );
+
+                                    Toast.makeText(
+                                            UploadImageActivity.this,
+                                            "Image selected successfully",
+                                            Toast.LENGTH_SHORT
+                                    ).show();
                                 }
                             }
                         }
                 );
 
 
+        // ==========================================
+        // GALLERY BUTTON
+        // ==========================================
+
         btnGallery.setOnClickListener(v -> {
 
             Intent intent =
-                    new Intent(
-                            Intent.ACTION_PICK,
-                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-                    );
+                    new Intent(Intent.ACTION_OPEN_DOCUMENT);
+
+            intent.addCategory(
+                    Intent.CATEGORY_OPENABLE
+            );
+
+            intent.setType("image/*");
 
             galleryLauncher.launch(intent);
         });
 
 
-        // =========================
+        // ==========================================
         // CAMERA
-        // =========================
+        // ==========================================
 
         cameraLauncher =
                 registerForActivityResult(
@@ -165,16 +190,24 @@ public class UploadImageActivity extends AppCompatActivity {
                                                 bitmap
                                         );
 
-                                        // Convert camera image
-                                        // to Uri
                                         imageUri =
                                                 getImageUri(bitmap);
+
+                                        Toast.makeText(
+                                                UploadImageActivity.this,
+                                                "Photo captured successfully",
+                                                Toast.LENGTH_SHORT
+                                        ).show();
                                     }
                                 }
                             }
                         }
                 );
 
+
+        // ==========================================
+        // CAMERA BUTTON
+        // ==========================================
 
         btnCamera.setOnClickListener(v -> {
 
@@ -187,16 +220,19 @@ public class UploadImageActivity extends AppCompatActivity {
         });
 
 
-        // =========================
+        // ==========================================
         // BACK BUTTON
-        // =========================
+        // ==========================================
 
-        btnBack.setOnClickListener(v -> finish());
+        btnBack.setOnClickListener(v -> {
+
+            finish();
+        });
 
 
-        // =========================
+        // ==========================================
         // ANALYZE BUTTON
-        // =========================
+        // ==========================================
 
         btnAnalyze.setOnClickListener(v -> {
 
@@ -204,12 +240,13 @@ public class UploadImageActivity extends AppCompatActivity {
 
                 Toast.makeText(
                         UploadImageActivity.this,
-                        "Please select an image first",
+                        "Please select a nail image first",
                         Toast.LENGTH_SHORT
                 ).show();
 
                 return;
             }
+
 
             if (loggedInEmail == null
                     || loggedInEmail.trim().isEmpty()) {
@@ -223,14 +260,15 @@ public class UploadImageActivity extends AppCompatActivity {
                 return;
             }
 
+
             uploadImage();
         });
     }
 
 
-    // =====================================================
+    // ==========================================
     // CAMERA BITMAP TO URI
-    // =====================================================
+    // ==========================================
 
     private Uri getImageUri(Bitmap bitmap) {
 
@@ -242,13 +280,17 @@ public class UploadImageActivity extends AppCompatActivity {
                         null
                 );
 
+        if (path == null) {
+            return null;
+        }
+
         return Uri.parse(path);
     }
 
 
-    // =====================================================
+    // ==========================================
     // UPLOAD IMAGE
-    // =====================================================
+    // ==========================================
 
     private void uploadImage() {
 
@@ -271,10 +313,14 @@ public class UploadImageActivity extends AppCompatActivity {
             }
 
 
+            // ==========================================
+            // TEMP FILE
+            // ==========================================
+
             File file =
                     new File(
                             getCacheDir(),
-                            "upload_image.jpg"
+                            "nail_image.jpg"
                     );
 
 
@@ -282,8 +328,7 @@ public class UploadImageActivity extends AppCompatActivity {
                     new FileOutputStream(file);
 
 
-            byte[] buffer =
-                    new byte[4096];
+            byte[] buffer = new byte[4096];
 
             int bytesRead;
 
@@ -299,13 +344,14 @@ public class UploadImageActivity extends AppCompatActivity {
             }
 
 
+            outputStream.flush();
             outputStream.close();
             inputStream.close();
 
 
-            // =========================
+            // ==========================================
             // REQUEST BODY
-            // =========================
+            // ==========================================
 
             RequestBody requestFile =
                     RequestBody.create(
@@ -313,6 +359,10 @@ public class UploadImageActivity extends AppCompatActivity {
                             MediaType.parse("image/jpeg")
                     );
 
+
+            // ==========================================
+            // MULTIPART
+            // ==========================================
 
             MultipartBody.Part body =
                     MultipartBody.Part.createFormData(
@@ -322,101 +372,142 @@ public class UploadImageActivity extends AppCompatActivity {
                     );
 
 
+            // ==========================================
+            // EMAIL
+            // ==========================================
+
             RequestBody email =
                     RequestBody.create(
-                            loggedInEmail,
+                            loggedInEmail.trim(),
                             MediaType.parse("text/plain")
                     );
 
 
-            // =========================
+            Toast.makeText(
+                    this,
+                    "Uploading image...",
+                    Toast.LENGTH_SHORT
+            ).show();
+
+
+            // ==========================================
             // API CALL
-            // =========================
+            // ==========================================
 
             apiService
                     .uploadImage(body, email)
-                    .enqueue(
-                            new Callback<NailAnalysis>() {
+                    .enqueue(new Callback<NailAnalysis>() {
 
-                                @Override
-                                public void onResponse(
-                                        Call<NailAnalysis> call,
-                                        Response<NailAnalysis> response) {
+                        @Override
+                        public void onResponse(
+                                Call<NailAnalysis> call,
+                                Response<NailAnalysis> response) {
 
+                            if (response.isSuccessful()
+                                    && response.body() != null) {
 
-                                    if (response.isSuccessful()
-                                            && response.body() != null) {
-
-                                        NailAnalysis analysis =
-                                                response.body();
+                                NailAnalysis nailAnalysis =
+                                        response.body();
 
 
-                                        Long analysisId =
-                                                analysis.getId();
+                                Toast.makeText(
+                                        UploadImageActivity.this,
+                                        "Image uploaded successfully",
+                                        Toast.LENGTH_SHORT
+                                ).show();
 
 
-                                        Toast.makeText(
+                                // ==========================================
+                                // OPEN ANALYZE PAGE
+                                // ==========================================
+
+                                Intent intent =
+                                        new Intent(
                                                 UploadImageActivity.this,
-                                                "Image Uploaded Successfully",
-                                                Toast.LENGTH_SHORT
-                                        ).show();
-
-
-                                        // =========================
-                                        // OPEN ANALYZE SCREEN
-                                        // =========================
-
-                                        Intent intent =
-                                                new Intent(
-                                                        UploadImageActivity.this,
-                                                        AnalyzeActivity.class
-                                                );
-
-
-                                        intent.putExtra(
-                                                "email",
-                                                loggedInEmail
+                                                AnalyzeActivity.class
                                         );
 
 
-                                        intent.putExtra(
-                                                "analysisId",
-                                                analysisId
-                                        );
+                                intent.putExtra(
+                                        "email",
+                                        loggedInEmail
+                                );
 
 
-                                        startActivity(intent);
+                                if (imageUri != null) {
 
-                                    } else {
+                                    intent.putExtra(
+                                            "imageUri",
+                                            imageUri.toString()
+                                    );
+                                }
 
-                                        String errorMessage =
-                                                "Upload failed: "
-                                                        + response.code();
+
+                                // ==========================================
+                                // START ANALYZE ACTIVITY
+                                // ==========================================
+
+                                startActivity(intent);
 
 
-                                        Toast.makeText(
-                                                UploadImageActivity.this,
-                                                errorMessage,
-                                                Toast.LENGTH_LONG
-                                        ).show();
+                                // Do NOT finish yet
+                                // We are keeping this activity
+                                // temporarily for testing.
+
+                                Toast.makeText(
+                                        UploadImageActivity.this,
+                                        "Opening Analyze Page...",
+                                        Toast.LENGTH_LONG
+                                ).show();
+
+
+                            } else {
+
+                                String errorMessage =
+                                        "Upload failed: "
+                                                + response.code();
+
+
+                                try {
+
+                                    if (response.errorBody()
+                                            != null) {
+
+                                        errorMessage +=
+                                                "\n"
+                                                        + response
+                                                        .errorBody()
+                                                        .string();
                                     }
+
+                                } catch (Exception e) {
+
+                                    e.printStackTrace();
                                 }
 
 
-                                @Override
-                                public void onFailure(
-                                        Call<NailAnalysis> call,
-                                        Throwable t) {
-
-                                    Toast.makeText(
-                                            UploadImageActivity.this,
-                                            "Connection failed: "
-                                                    + t.getMessage(),
-                                            Toast.LENGTH_LONG
-                                    ).show();
-                                }
+                                Toast.makeText(
+                                        UploadImageActivity.this,
+                                        errorMessage,
+                                        Toast.LENGTH_LONG
+                                ).show();
                             }
-                    );
+                        }
+
+
+                        @Override
+                        public void onFailure(
+                                Call<NailAnalysis> call,
+                                Throwable t) {
+
+                            Toast.makeText(
+                                    UploadImageActivity.this,
+                                    "Connection failed:\n"
+                                            + t.getMessage(),
+                                    Toast.LENGTH_LONG
+                            ).show();
+                        }
+                    });
 
 
         } catch (IOException e) {
@@ -425,8 +516,9 @@ public class UploadImageActivity extends AppCompatActivity {
 
             Toast.makeText(
                     this,
-                    "Unable to read selected image",
-                    Toast.LENGTH_SHORT
+                    "Unable to read selected image:\n"
+                            + e.getMessage(),
+                    Toast.LENGTH_LONG
             ).show();
         }
     }

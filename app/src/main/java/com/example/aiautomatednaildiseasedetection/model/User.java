@@ -12,6 +12,7 @@ public class User {
     private String profileImage;
     private String password;
     private String role;
+    private Boolean verified = false;
 
     public User() {
     }
@@ -94,5 +95,13 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public Boolean getVerified() {
+        return verified;
+    }
+
+    public void setVerified(Boolean verified) {
+        this.verified = verified;
     }
 }
