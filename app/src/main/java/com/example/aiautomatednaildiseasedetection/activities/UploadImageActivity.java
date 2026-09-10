@@ -441,6 +441,14 @@ public class UploadImageActivity extends AppCompatActivity {
                                             imageUri.toString()
                                     );
                                 }
+                                // Send Analysis ID
+                                if (nailAnalysis.getId() != null) {
+
+                                    intent.putExtra(
+                                            "analysisId",
+                                            nailAnalysis.getId()
+                                    );
+                                }
 
 
                                 // ==========================================

@@ -25,9 +25,11 @@
                 android:layout_height="48dp"
                 android:background="@android:color/transparent"
                 android:src="@drawable/ic_back"
-                android:padding="10dp"
+                android:padding="8dp"
+                android:tint="#183C8C"
                 android:clickable="true"
-                android:focusable="true"/>
+                android:focusable="true"
+                android:contentDescription="Back"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

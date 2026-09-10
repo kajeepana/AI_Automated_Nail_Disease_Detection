@@ -263,7 +263,7 @@ public class ProfileActivity extends AppCompatActivity {
                     AnalysisHistoryActivity.class
             );
 
-            intent.putExtra("email", loggedInEmail);
+            intent.putExtra("email",  loggedInEmail);
 
             startActivity(intent);
         });

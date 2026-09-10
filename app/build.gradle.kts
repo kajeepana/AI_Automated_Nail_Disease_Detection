@@ -44,6 +44,7 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-scalars:2.11.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
     implementation("com.squareup.retrofit2:converter-scalars:2.11.0")
+    implementation("org.tensorflow:tensorflow-lite:2.17.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.espresso.core)

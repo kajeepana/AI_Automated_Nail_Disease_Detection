@@ -39,33 +39,64 @@ public class ResultActivity extends AppCompatActivity {
 
     private String loggedInEmail;
 
+    // AI classification result
+    private String predictedCondition;
+    private float predictionConfidence;
+
     private ApiService apiService;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_result);
+
 
         // ==========================
         // Get Email
         // ==========================
 
-        loggedInEmail = getIntent().getStringExtra("email");
+        loggedInEmail =
+                getIntent().getStringExtra("email");
+
+
+        // ==========================
+        // Get AI Classification Result
+        // ==========================
+
+        predictedCondition =
+                getIntent().getStringExtra(
+                        "predictedCondition"
+                );
+
+        predictionConfidence =
+                getIntent().getFloatExtra(
+                        "predictionConfidence",
+                        0f
+                );
+
 
         // ==========================
         // Initialize API
         // ==========================
 
         apiService =
-                RetrofitClient.getClient().create(ApiService.class);
+                RetrofitClient
+                        .getClient()
+                        .create(ApiService.class);
+
 
         // ==========================
         // Initialize Views
         // ==========================
 
-        imgResult = findViewById(R.id.imgResult);
+        imgResult =
+                findViewById(R.id.imgResult);
 
-        btnBack = findViewById(R.id.btnBack);
+        btnBack =
+                findViewById(R.id.btnBack);
 
         txtDiseaseName =
                 findViewById(R.id.txtDiseaseName);
@@ -94,12 +125,21 @@ public class ResultActivity extends AppCompatActivity {
         btnFeedback =
                 findViewById(R.id.btnFeedback);
 
+
         // ==========================
         // Get Analysis ID
         // ==========================
 
         long analysisId =
-                getIntent().getLongExtra("analysisId", -1);
+                getIntent().getLongExtra(
+                        "analysisId",
+                        -1
+                );
+
+
+        // ==========================
+        // Check Analysis ID
+        // ==========================
 
         if (analysisId == -1) {
 
@@ -112,11 +152,29 @@ public class ResultActivity extends AppCompatActivity {
             return;
         }
 
+
         // ==========================
-        // Load Analysis Result
+        // Display AI Result
         // ==========================
 
-        loadAnalysisResult(analysisId);
+        if (predictedCondition != null
+                && !predictedCondition.isEmpty()) {
+
+            displayClassificationResult(
+                    predictedCondition,
+                    predictionConfidence
+            );
+
+        } else {
+
+            // If AI result is not available,
+            // get result from backend.
+
+            loadAnalysisResult(
+                    analysisId
+            );
+        }
+
 
         // ==========================
         // Back Button
@@ -124,20 +182,10 @@ public class ResultActivity extends AppCompatActivity {
 
         btnBack.setOnClickListener(v -> {
 
-            Intent intent = new Intent(
-                    ResultActivity.this,
-                    UploadImageActivity.class
-            );
-
-            intent.putExtra(
-                    "email",
-                    loggedInEmail
-            );
-
-            startActivity(intent);
-
             finish();
+
         });
+
 
         // ==========================
         // Upload Again
@@ -145,18 +193,15 @@ public class ResultActivity extends AppCompatActivity {
 
         btnUploadAgain.setOnClickListener(v -> {
 
-            Intent intent = new Intent(
-                    ResultActivity.this,
-                    UploadImageActivity.class
-            );
+            Intent intent =
+                    new Intent(
+                            ResultActivity.this,
+                            UploadImageActivity.class
+                    );
 
             intent.putExtra(
                     "email",
                     loggedInEmail
-            );
-
-            intent.addFlags(
-                    Intent.FLAG_ACTIVITY_CLEAR_TOP
             );
 
             startActivity(intent);
@@ -164,38 +209,129 @@ public class ResultActivity extends AppCompatActivity {
             finish();
         });
 
+
         // ==========================
         // Feedback
         // ==========================
 
         btnFeedback.setOnClickListener(v -> {
 
-            Intent intent = new Intent(
-                    ResultActivity.this,
-                    FeedbackActivity.class
-            );
+            Intent intent =
+                    new Intent(
+                            ResultActivity.this,
+                            FeedbackActivity.class
+                    );
 
-            // Send logged in email
+
+            // Send email
+
             intent.putExtra(
                     "email",
                     loggedInEmail
             );
 
-            // Send actual analysis ID
+
+            // Send analysis ID
+
             intent.putExtra(
                     "analysisId",
                     analysisId
             );
 
+
             startActivity(intent);
         });
     }
+
+
+    // =====================================================
+    // Display Classification Result From AI Model
+    // =====================================================
+
+    private void displayClassificationResult(
+            String disease,
+            float confidence
+    ) {
+
+        int confidenceInt =
+                Math.round(confidence);
+
+
+        // ==========================
+        // Disease
+        // ==========================
+
+        txtDiseaseName.setText(
+                disease
+        );
+
+
+        // ==========================
+        // Confidence
+        // ==========================
+
+        txtConfidenceValue.setText(
+                confidenceInt + "%"
+        );
+
+
+        progressConfidence.setMax(100);
+
+        progressConfidence.setProgress(
+                confidenceInt
+        );
+
+
+        // ==========================
+        // Severity
+        // ==========================
+
+        // Severity model is not
+        // connected yet.
+
+        int severity = 0;
+
+
+        progressSeverity.setMax(100);
+
+        progressSeverity.setProgress(
+                severity
+        );
+
+
+        txtSeverityValue.setText(
+                String.valueOf(severity)
+        );
+
+
+        txtSeverity.setText(
+                "Mild"
+        );
+
+
+        // ==========================
+        // Description
+        // ==========================
+
+        txtDescription.setText(
+                "The uploaded nail image has been "
+                        + "classified as "
+                        + disease
+                        + ". The AI model confidence is "
+                        + confidenceInt
+                        + "%. Please consult a "
+                        + "dermatologist for confirmation."
+        );
+    }
+
 
     // =====================================================
     // Load Analysis Result From Backend
     // =====================================================
 
-    private void loadAnalysisResult(long analysisId) {
+    private void loadAnalysisResult(
+            long analysisId
+    ) {
 
         apiService
                 .getAnalysisById(analysisId)
@@ -204,7 +340,8 @@ public class ResultActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(
                             Call<NailAnalysis> call,
-                            Response<NailAnalysis> response) {
+                            Response<NailAnalysis> response
+                    ) {
 
                         if (response.isSuccessful()
                                 && response.body() != null) {
@@ -212,12 +349,15 @@ public class ResultActivity extends AppCompatActivity {
                             NailAnalysis analysis =
                                     response.body();
 
+
                             // ==========================
                             // Disease
                             // ==========================
 
                             String disease =
-                                    analysis.getPredictedCondition();
+                                    analysis
+                                            .getPredictedCondition();
+
 
                             // ==========================
                             // Confidence
@@ -225,12 +365,16 @@ public class ResultActivity extends AppCompatActivity {
 
                             int confidence = 0;
 
-                            if (analysis.getConfidence() != null) {
+
+                            if (analysis.getConfidence()
+                                    != null) {
 
                                 confidence =
-                                        analysis.getConfidence()
+                                        analysis
+                                                .getConfidence()
                                                 .intValue();
                             }
+
 
                             // ==========================
                             // Severity
@@ -238,19 +382,26 @@ public class ResultActivity extends AppCompatActivity {
 
                             int severity = 0;
 
-                            if (analysis.getSeverityScore() != null) {
+
+                            if (analysis
+                                    .getSeverityScore()
+                                    != null) {
 
                                 severity =
-                                        analysis.getSeverityScore()
+                                        analysis
+                                                .getSeverityScore()
                                                 .intValue();
                             }
+
 
                             // ==========================
                             // Severity Label
                             // ==========================
 
                             String severityLabel =
-                                    analysis.getSeverityLabel();
+                                    analysis
+                                            .getSeverityLabel();
+
 
                             // ==========================
                             // Display Disease
@@ -260,6 +411,7 @@ public class ResultActivity extends AppCompatActivity {
                                     disease
                             );
 
+
                             // ==========================
                             // Display Confidence
                             // ==========================
@@ -268,25 +420,37 @@ public class ResultActivity extends AppCompatActivity {
                                     confidence + "%"
                             );
 
-                            progressConfidence.setMax(100);
+
+                            progressConfidence.setMax(
+                                    100
+                            );
+
 
                             progressConfidence.setProgress(
                                     confidence
                             );
 
+
                             // ==========================
                             // Display Severity
                             // ==========================
 
-                            progressSeverity.setMax(100);
+                            progressSeverity.setMax(
+                                    100
+                            );
+
 
                             progressSeverity.setProgress(
                                     severity
                             );
 
+
                             txtSeverityValue.setText(
-                                    String.valueOf(severity)
+                                    String.valueOf(
+                                            severity
+                                    )
                             );
+
 
                             // ==========================
                             // Display Severity Label
@@ -321,6 +485,7 @@ public class ResultActivity extends AppCompatActivity {
                                 }
                             }
 
+
                             // ==========================
                             // Description
                             // ==========================
@@ -336,6 +501,7 @@ public class ResultActivity extends AppCompatActivity {
                                             + "dermatologist for confirmation."
                             );
 
+
                         } else {
 
                             Toast.makeText(
@@ -346,10 +512,12 @@ public class ResultActivity extends AppCompatActivity {
                         }
                     }
 
+
                     @Override
                     public void onFailure(
                             Call<NailAnalysis> call,
-                            Throwable t) {
+                            Throwable t
+                    ) {
 
                         Toast.makeText(
                                 ResultActivity.this,

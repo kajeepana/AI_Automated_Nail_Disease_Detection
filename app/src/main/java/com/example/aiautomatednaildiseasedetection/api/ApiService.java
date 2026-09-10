@@ -72,11 +72,11 @@ public interface ApiService {
 
 
     // VERIFY FORGOT PASSWORD OTP
-    @POST("api/users/forgot-password/verify-otp")
+    // VERIFY FORGOT PASSWORD OTP
+    @POST("api/users/verify-otp")
     Call<String> verifyForgotPasswordOtp(
             @Body VerifyOtpRequest request
     );
-
 
     // RESET PASSWORD
     @POST("api/users/reset-password")

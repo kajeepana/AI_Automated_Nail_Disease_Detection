@@ -35,135 +35,236 @@ public class AnalysisHistoryActivity extends AppCompatActivity {
 
     private String loggedInEmail;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_analysis_history);
+        setContentView(
+                R.layout.activity_analysis_history
+        );
 
-        // Get logged-in email
-        loggedInEmail = getIntent().getStringExtra("email");
 
-        // Connect API
-        apiService = RetrofitClient
-                .getClient()
-                .create(ApiService.class);
+        // ==========================
+        // Get Email
+        // ==========================
 
-        // Connect views
-        btnBack = findViewById(R.id.btnBack);
-        recyclerHistory = findViewById(R.id.recyclerHistory);
-        progressBar = findViewById(R.id.progressBar);
-        txtEmpty = findViewById(R.id.txtEmpty);
+        loggedInEmail =
+                getIntent().getStringExtra("email");
 
-        // RecyclerView setup
+
+        // ==========================
+        // Initialize API
+        // ==========================
+
+        apiService =
+                RetrofitClient
+                        .getClient()
+                        .create(ApiService.class);
+
+
+        // ==========================
+        // Initialize Views
+        // ==========================
+
+        btnBack =
+                findViewById(R.id.btnBack);
+
+        recyclerHistory =
+                findViewById(R.id.recyclerHistory);
+
+        progressBar =
+                findViewById(R.id.progressBar);
+
+        txtEmpty =
+                findViewById(R.id.txtEmpty);
+
+
+        // ==========================
+        // RecyclerView
+        // ==========================
+
         recyclerHistory.setLayoutManager(
                 new LinearLayoutManager(this)
         );
 
-        // Back button
+
+        // ==========================
+        // Back Button
+        // ==========================
+
         btnBack.setOnClickListener(v -> finish());
 
-        // Check email
-        if (loggedInEmail == null || loggedInEmail.isEmpty()) {
 
-            Toast.makeText(
-                    this,
-                    "Email not found",
-                    Toast.LENGTH_SHORT
-            ).show();
+        // ==========================
+        // Check Email
+        // ==========================
 
-            txtEmpty.setVisibility(View.VISIBLE);
-            txtEmpty.setText("Unable to load analysis history.");
+        if (loggedInEmail == null
+                || loggedInEmail.trim().isEmpty()) {
+
+            progressBar.setVisibility(
+                    View.GONE
+            );
+
+            txtEmpty.setVisibility(
+                    View.VISIBLE
+            );
+
+            txtEmpty.setText(
+                    "Email not found"
+            );
 
             return;
         }
 
-        // Load history
-        Toast.makeText(
-                this,
-                "Email: " + loggedInEmail,
-                Toast.LENGTH_LONG
-        ).show();
 
-        loadAnalysisHistory();    }
+        // ==========================
+        // Load History
+        // ==========================
+
+        loadAnalysisHistory();
+    }
+
+
+    // =====================================================
+    // Load Analysis History
+    // =====================================================
 
     private void loadAnalysisHistory() {
 
-        progressBar.setVisibility(View.VISIBLE);
-        txtEmpty.setVisibility(View.GONE);
+        progressBar.setVisibility(
+                View.VISIBLE
+        );
 
-        apiService.getAnalysesByEmail(loggedInEmail)
-                .enqueue(new Callback<List<NailAnalysis>>() {
+        recyclerHistory.setVisibility(
+                View.GONE
+        );
 
-                    @Override
-                    public void onResponse(
-                            Call<List<NailAnalysis>> call,
-                            Response<List<NailAnalysis>> response) {
+        txtEmpty.setVisibility(
+                View.GONE
+        );
 
-                        progressBar.setVisibility(View.GONE);
 
-                        if (response.isSuccessful()
-                                && response.body() != null) {
+        apiService
+                .getAnalysesByEmail(
+                        loggedInEmail
+                )
+                .enqueue(
+                        new Callback<List<NailAnalysis>>() {
 
-                            List<NailAnalysis> analysisList =
-                                    response.body();
+                            @Override
+                            public void onResponse(
+                                    Call<List<NailAnalysis>> call,
+                                    Response<List<NailAnalysis>> response
+                            ) {
 
-                            if (analysisList.isEmpty()) {
-
-                                txtEmpty.setVisibility(View.VISIBLE);
-
-                                txtEmpty.setText(
-                                        "No analysis history found"
+                                progressBar.setVisibility(
+                                        View.GONE
                                 );
 
-                            } else {
 
-                                txtEmpty.setVisibility(View.GONE);
+                                if (response.isSuccessful()
+                                        && response.body() != null) {
 
-                                adapter =
-                                        new AnalysisHistoryAdapter(
-                                                analysisList
+                                    List<NailAnalysis> analysisList =
+                                            response.body();
+
+
+                                    if (analysisList.isEmpty()) {
+
+                                        recyclerHistory.setVisibility(
+                                                View.GONE
                                         );
 
-                                recyclerHistory.setAdapter(adapter);
+                                        txtEmpty.setVisibility(
+                                                View.VISIBLE
+                                        );
+
+                                        txtEmpty.setText(
+                                                "No analysis history found"
+                                        );
+
+                                    } else {
+
+                                        txtEmpty.setVisibility(
+                                                View.GONE
+                                        );
+
+                                        recyclerHistory.setVisibility(
+                                                View.VISIBLE
+                                        );
+
+
+                                        adapter =
+                                                new AnalysisHistoryAdapter(
+                                                        analysisList
+                                                );
+
+
+                                        recyclerHistory.setAdapter(
+                                                adapter
+                                        );
+                                    }
+
+                                } else {
+
+                                    recyclerHistory.setVisibility(
+                                            View.GONE
+                                    );
+
+                                    txtEmpty.setVisibility(
+                                            View.VISIBLE
+                                    );
+
+                                    txtEmpty.setText(
+                                            "Unable to load history\n"
+                                                    + "Server Error: "
+                                                    + response.code()
+                                    );
+
+
+                                    Toast.makeText(
+                                            AnalysisHistoryActivity.this,
+                                            "Server Error: "
+                                                    + response.code(),
+                                            Toast.LENGTH_LONG
+                                    ).show();
+                                }
                             }
 
-                        } else {
 
-                            txtEmpty.setVisibility(View.VISIBLE);
+                            @Override
+                            public void onFailure(
+                                    Call<List<NailAnalysis>> call,
+                                    Throwable t
+                            ) {
 
-                            txtEmpty.setText(
-                                    "Failed to load analysis history"
-                            );
+                                progressBar.setVisibility(
+                                        View.GONE
+                                );
 
-                            Toast.makeText(
-                                    AnalysisHistoryActivity.this,
-                                    "Server Error: "
-                                            + response.code(),
-                                    Toast.LENGTH_LONG
-                            ).show();
+                                recyclerHistory.setVisibility(
+                                        View.GONE
+                                );
+
+                                txtEmpty.setVisibility(
+                                        View.VISIBLE
+                                );
+
+                                txtEmpty.setText(
+                                        "Unable to connect to server"
+                                );
+
+
+                                Toast.makeText(
+                                        AnalysisHistoryActivity.this,
+                                        "Connection Error",
+                                        Toast.LENGTH_LONG
+                                ).show();
+                            }
                         }
-                    }
-
-                    @Override
-                    public void onFailure(
-                            Call<List<NailAnalysis>> call,
-                            Throwable t) {
-
-                        progressBar.setVisibility(View.GONE);
-
-                        txtEmpty.setVisibility(View.VISIBLE);
-
-                        txtEmpty.setText(
-                                "Unable to connect to server"
-                        );
-
-                        Toast.makeText(
-                                AnalysisHistoryActivity.this,
-                                "Error: " + t.getMessage(),
-                                Toast.LENGTH_LONG
-                        ).show();
-                    }
-                });
+                );
     }
 }
