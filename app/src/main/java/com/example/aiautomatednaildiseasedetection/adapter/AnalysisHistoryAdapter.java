@@ -1,5 +1,6 @@
 package com.example.aiautomatednaildiseasedetection.adapter;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,9 +11,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.aiautomatednaildiseasedetection.R;
+import com.example.aiautomatednaildiseasedetection.activities.ResultActivity;
 import com.example.aiautomatednaildiseasedetection.model.NailAnalysis;
 
 import java.util.List;
+import java.util.Locale;
 
 public class AnalysisHistoryAdapter
         extends RecyclerView.Adapter<AnalysisHistoryAdapter.ViewHolder> {
@@ -46,12 +49,12 @@ public class AnalysisHistoryAdapter
 
         NailAnalysis analysis = analysisList.get(position);
 
-
+        // Analysis ID
         holder.txtAnalysisId.setText(
                 "ANALYSIS #" + analysis.getId()
         );
 
-
+        // Disease
         String disease = analysis.getPredictedCondition();
 
         if (disease != null && !disease.isEmpty()) {
@@ -60,11 +63,20 @@ public class AnalysisHistoryAdapter
             holder.txtDiseaseName.setText("Unknown");
         }
 
+        // Confidence - NULL SAFE
+        Double confidenceValue = analysis.getConfidence();
 
-        double confidence = analysis.getConfidence();
+        double confidence = 0.0;
+
+        if (confidenceValue != null) {
+            confidence = confidenceValue;
+        }
+
+        // Keep confidence between 0 and 100
+        confidence = Math.max(0, Math.min(100, confidence));
 
         holder.txtConfidence.setText(
-                String.format("%.0f%%", confidence)
+                String.format(Locale.getDefault(), "%.0f%%", confidence)
         );
 
         holder.progressConfidence.setMax(100);
@@ -72,7 +84,7 @@ public class AnalysisHistoryAdapter
                 (int) confidence
         );
 
-
+        // Severity Label
         String severityLabel = analysis.getSeverityLabel();
 
         if (severityLabel != null && !severityLabel.isEmpty()) {
@@ -81,35 +93,57 @@ public class AnalysisHistoryAdapter
             holder.txtSeverityLabel.setText("Unknown");
         }
 
+        // Severity Score - NULL SAFE
+        Double severityScoreValue = analysis.getSeverityScore();
 
-        double severityScore = analysis.getSeverityScore();
+        double severityScore = 0.0;
+
+        if (severityScoreValue != null) {
+            severityScore = severityScoreValue;
+        }
+
+        // Keep severity between 0 and 100
+        severityScore = Math.max(0, Math.min(100, severityScore));
 
         holder.txtSeverityScore.setText(
-                String.format("%.0f / 100", severityScore)
+                String.format(
+                        Locale.getDefault(),
+                        "%.0f / 100",
+                        severityScore
+                )
         );
 
-
+        // Status
         String status = analysis.getStatus();
 
         if (status != null && !status.isEmpty()) {
+
             holder.txtStatus.setText(
-                    status.substring(0, 1).toUpperCase()
+                    status.substring(0, 1).toUpperCase(Locale.getDefault())
                             + status.substring(1)
             );
+
         } else {
             holder.txtStatus.setText("Completed");
         }
+
+        // Open result when history item is clicked
         holder.itemView.setOnClickListener(v -> {
 
-            android.content.Intent intent =
-                    new android.content.Intent(
-                            v.getContext(),
-                            com.example.aiautomatednaildiseasedetection.activities.ResultActivity.class
-                    );
+            Intent intent = new Intent(
+                    v.getContext(),
+                    ResultActivity.class
+            );
 
-            intent.putExtra("analysisId", analysis.getId());
+            intent.putExtra(
+                    "analysisId",
+                    analysis.getId()
+            );
 
-            intent.putExtra("email", analysis.getEmail());
+            intent.putExtra(
+                    "email",
+                    analysis.getEmail()
+            );
 
             v.getContext().startActivity(intent);
         });

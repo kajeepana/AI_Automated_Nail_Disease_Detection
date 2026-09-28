@@ -216,7 +216,7 @@ public class ProfileActivity extends AppCompatActivity {
                 intent.putExtra("email", email);
 
                 startActivity(intent);
-                finish();
+
 
             } else {
 
@@ -242,8 +242,6 @@ public class ProfileActivity extends AppCompatActivity {
             intent.putExtra("email", loggedInEmail);
 
             startActivity(intent);
-
-            finish();
 
         });
         btnLogout.setOnClickListener(v -> {

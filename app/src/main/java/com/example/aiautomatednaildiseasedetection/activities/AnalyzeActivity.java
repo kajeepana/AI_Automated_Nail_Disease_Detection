@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -269,27 +270,66 @@ public class AnalyzeActivity extends AppCompatActivity {
 
 
                 // =================================================
-                // STEP 2 - CLASSIFICATION
+                // STEP 2 - SEGMENTED IMAGE + CLASSIFICATION
                 // =================================================
 
-                if (classificationHelper != null) {
+                if (classificationHelper != null
+                        && segmentationHelper != null) {
 
                     Log.d(
                             "AI_MODEL",
-                            "🔄 Running classification..."
+                            "🔄 Creating segmented nail image..."
+                    );
+
+
+                    Bitmap segmentedNail =
+                            segmentationHelper.getSegmentedNail(
+                                    bitmap
+                            );
+
+
+                    Log.d(
+                            "AI_MODEL",
+                            "✅ Segmented nail image created"
+                    );
+
+
+                    // =================================================
+                    // TEMPORARY DISPLAY OF SEGMENTED NAIL
+                    // =================================================
+
+                    runOnUiThread(() -> {
+
+                        ImageView imgNail =
+                                findViewById(
+                                        R.id.imgNail
+                                );
+
+                        imgNail.setImageBitmap(
+                                segmentedNail
+                        );
+
+                    });
+
+
+                    // =================================================
+                    // CLASSIFICATION
+                    // =================================================
+
+                    Log.d(
+                            "AI_MODEL",
+                            "🔄 Running classification on segmented nail..."
                     );
 
 
                     ClassificationHelper.ClassificationResult result =
                             classificationHelper.classify(
-                                    bitmap
+                                    segmentedNail
                             );
 
 
-                    // Save prediction
                     predictedCondition =
                             result.condition;
-
 
                     predictionConfidence =
                             result.confidence;
@@ -427,19 +467,16 @@ public class AnalyzeActivity extends AppCompatActivity {
     protected void onDestroy() {
 
         if (executorService != null) {
-
             executorService.shutdown();
         }
 
 
         if (segmentationHelper != null) {
-
             segmentationHelper.close();
         }
 
 
         if (classificationHelper != null) {
-
             classificationHelper.close();
         }
 

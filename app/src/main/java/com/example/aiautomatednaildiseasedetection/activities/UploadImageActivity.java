@@ -226,6 +226,18 @@ public class UploadImageActivity extends AppCompatActivity {
 
         btnBack.setOnClickListener(v -> {
 
+            Intent intent = new Intent(
+                    UploadImageActivity.this,
+                    ProfileActivity.class
+            );
+
+            intent.putExtra(
+                    "email",
+                    loggedInEmail
+            );
+
+            startActivity(intent);
+
             finish();
         });
 

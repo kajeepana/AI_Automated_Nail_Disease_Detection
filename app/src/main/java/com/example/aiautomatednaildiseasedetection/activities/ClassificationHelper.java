@@ -3,6 +3,7 @@ package com.example.aiautomatednaildiseasedetection.activities;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import org.tensorflow.lite.Interpreter;
 
@@ -12,6 +13,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.Locale;
 
 public class ClassificationHelper {
 
@@ -20,10 +22,9 @@ public class ClassificationHelper {
     // =========================
 
     private static final String MODEL_NAME =
-            "classification (1).tflite";
+            "classification.tflite";
 
     private static final int INPUT_SIZE = 224;
-
     private static final int CHANNELS = 3;
 
     // =========================
@@ -42,7 +43,6 @@ public class ClassificationHelper {
 
     private Interpreter interpreter;
 
-
     // =========================
     // CONSTRUCTOR
     // =========================
@@ -56,11 +56,15 @@ public class ClassificationHelper {
                 loadModelFile(context),
                 options
         );
+
+        Log.d(
+                "AI_PREDICTION",
+                "✅ Classification model loaded"
+        );
     }
 
-
     // =========================
-    // LOAD TFLITE MODEL
+    // LOAD MODEL
     // =========================
 
     private MappedByteBuffer loadModelFile(
@@ -85,16 +89,29 @@ public class ClassificationHelper {
         );
     }
 
-
     // =========================
     // CLASSIFY IMAGE
     // =========================
 
-    public ClassificationResult classify(
-            Bitmap bitmap
-    ) {
+    public ClassificationResult classify(Bitmap bitmap) {
 
-        // Resize image to 224 x 224
+        if (bitmap == null) {
+
+            Log.e(
+                    "AI_PREDICTION",
+                    "❌ Bitmap is null"
+            );
+
+            return new ClassificationResult(
+                    "Unknown",
+                    0.0f
+            );
+        }
+
+        // =========================
+        // RESIZE TO 224 x 224
+        // =========================
+
         Bitmap resizedBitmap =
                 Bitmap.createScaledBitmap(
                         bitmap,
@@ -102,7 +119,6 @@ public class ClassificationHelper {
                         INPUT_SIZE,
                         true
                 );
-
 
         // =========================
         // INPUT BUFFER
@@ -120,12 +136,10 @@ public class ClassificationHelper {
                 ByteOrder.nativeOrder()
         );
 
-
         int[] pixels =
                 new int[
                         INPUT_SIZE * INPUT_SIZE
                         ];
-
 
         resizedBitmap.getPixels(
                 pixels,
@@ -137,34 +151,53 @@ public class ClassificationHelper {
                 INPUT_SIZE
         );
 
-
         // =========================
-        // NORMALIZE IMAGE
+        // RAW PIXEL VALUES
+        // =========================
+        //
+        // IMPORTANT:
+        // Do NOT divide by 255 here.
+        //
+        // EfficientNet model contains
+        // its own preprocessing.
+        //
+        // Input values = 0 - 255
         // =========================
 
         for (int pixel : pixels) {
 
             float r =
-                    ((pixel >> 16) & 0xFF)
-                            / 255.0f;
+                    (pixel >> 16) & 0xFF;
 
             float g =
-                    ((pixel >> 8) & 0xFF)
-                            / 255.0f;
+                    (pixel >> 8) & 0xFF;
 
             float b =
-                    (pixel & 0xFF)
-                            / 255.0f;
-
+                    pixel & 0xFF;
 
             inputBuffer.putFloat(r);
             inputBuffer.putFloat(g);
             inputBuffer.putFloat(b);
         }
 
-
         inputBuffer.rewind();
 
+        // =========================
+        // INPUT INFORMATION
+        // =========================
+
+        Log.d(
+                "AI_PREDICTION",
+                "Input Original Bitmap = "
+                        + bitmap.getWidth()
+                        + " x "
+                        + bitmap.getHeight()
+        );
+
+        Log.d(
+                "AI_PREDICTION",
+                "Input Model Bitmap = 224 x 224"
+        );
 
         // =========================
         // MODEL OUTPUT
@@ -173,12 +206,37 @@ public class ClassificationHelper {
         float[][] output =
                 new float[1][CLASS_NAMES.length];
 
-
         interpreter.run(
                 inputBuffer,
                 output
         );
 
+        // =========================
+        // PRINT ALL 7 RESULTS
+        // =========================
+
+        Log.d(
+                "AI_PREDICTION",
+                "========== MODEL OUTPUT =========="
+        );
+
+        for (int i = 0;
+             i < CLASS_NAMES.length;
+             i++) {
+
+            float probability =
+                    output[0][i] * 100.0f;
+
+            Log.d(
+                    "AI_PREDICTION",
+                    String.format(
+                            Locale.getDefault(),
+                            "%s = %.2f%%",
+                            CLASS_NAMES[i],
+                            probability
+                    )
+            );
+        }
 
         // =========================
         // FIND HIGHEST PROBABILITY
@@ -189,13 +247,11 @@ public class ClassificationHelper {
         float bestConfidence =
                 output[0][0];
 
-
         for (int i = 1;
              i < CLASS_NAMES.length;
              i++) {
 
-            if (output[0][i] >
-                    bestConfidence) {
+            if (output[0][i] > bestConfidence) {
 
                 bestConfidence =
                         output[0][i];
@@ -204,25 +260,50 @@ public class ClassificationHelper {
             }
         }
 
-
         // =========================
-        // RESULT
+        // FINAL PREDICTION
         // =========================
 
         String condition =
                 CLASS_NAMES[bestIndex];
 
-
         float confidence =
                 bestConfidence * 100.0f;
 
+        // =========================
+        // FINAL RESULT LOG
+        // =========================
+
+        Log.d(
+                "AI_PREDICTION",
+                "--------------------------------"
+        );
+
+        Log.d(
+                "AI_PREDICTION",
+                "Predicted Disease: "
+                        + condition
+        );
+
+        Log.d(
+                "AI_PREDICTION",
+                String.format(
+                        Locale.getDefault(),
+                        "Confidence: %.2f%%",
+                        confidence
+                )
+        );
+
+        Log.d(
+                "AI_PREDICTION",
+                "================================"
+        );
 
         return new ClassificationResult(
                 condition,
                 confidence
         );
     }
-
 
     // =========================
     // RESULT CLASS
@@ -231,9 +312,7 @@ public class ClassificationHelper {
     public static class ClassificationResult {
 
         public String condition;
-
         public float confidence;
-
 
         public ClassificationResult(
                 String condition,
@@ -241,11 +320,9 @@ public class ClassificationHelper {
         ) {
 
             this.condition = condition;
-
             this.confidence = confidence;
         }
     }
-
 
     // =========================
     // CLOSE MODEL
