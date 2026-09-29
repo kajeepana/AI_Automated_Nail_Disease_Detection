@@ -94,7 +94,9 @@ public class AnalysisHistoryActivity extends AppCompatActivity {
         // Back Button
         // ==========================
 
-        btnBack.setOnClickListener(v -> finish());
+        btnBack.setOnClickListener(
+                v -> finish()
+        );
 
 
         // ==========================
@@ -172,6 +174,10 @@ public class AnalysisHistoryActivity extends AppCompatActivity {
                                             response.body();
 
 
+                                    // ==========================
+                                    // No History
+                                    // ==========================
+
                                     if (analysisList.isEmpty()) {
 
                                         recyclerHistory.setVisibility(
@@ -186,7 +192,13 @@ public class AnalysisHistoryActivity extends AppCompatActivity {
                                                 "No analysis history found"
                                         );
 
-                                    } else {
+                                    }
+
+                                    // ==========================
+                                    // History Available
+                                    // ==========================
+
+                                    else {
 
                                         txtEmpty.setVisibility(
                                                 View.GONE
@@ -208,7 +220,13 @@ public class AnalysisHistoryActivity extends AppCompatActivity {
                                         );
                                     }
 
-                                } else {
+                                }
+
+                                // ==========================
+                                // Server Error
+                                // ==========================
+
+                                else {
 
                                     recyclerHistory.setVisibility(
                                             View.GONE

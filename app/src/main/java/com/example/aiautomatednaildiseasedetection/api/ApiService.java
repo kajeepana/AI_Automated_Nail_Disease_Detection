@@ -8,7 +8,7 @@ import com.example.aiautomatednaildiseasedetection.model.LoginRequest;
 import com.example.aiautomatednaildiseasedetection.model.NailAnalysis;
 import com.example.aiautomatednaildiseasedetection.model.Upload;
 import com.example.aiautomatednaildiseasedetection.model.User;
-
+import retrofit2.http.PUT;
 import java.util.List;
 
 import okhttp3.MultipartBody;
@@ -129,6 +129,12 @@ public interface ApiService {
     // SAVE ANALYSIS
     @POST("api/analysis")
     Call<NailAnalysis> saveAnalysis(
+            @Body NailAnalysis analysis
+    );
+    // UPDATE ANALYSIS
+    @PUT("api/analysis/{id}")
+    Call<NailAnalysis> updateAnalysis(
+            @Path("id") Long id,
             @Body NailAnalysis analysis
     );
 

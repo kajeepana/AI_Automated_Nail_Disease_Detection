@@ -13,10 +13,18 @@ import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.aiautomatednaildiseasedetection.R;
+import com.example.aiautomatednaildiseasedetection.api.ApiService;
+import com.example.aiautomatednaildiseasedetection.model.NailAnalysis;
+import com.example.aiautomatednaildiseasedetection.network.RetrofitClient;
 
 import java.io.InputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 public class AnalyzeActivity extends AppCompatActivity {
 
@@ -295,7 +303,7 @@ public class AnalyzeActivity extends AppCompatActivity {
 
 
                     // =================================================
-                    // TEMPORARY DISPLAY OF SEGMENTED NAIL
+                    // DISPLAY SEGMENTED NAIL
                     // =================================================
 
                     runOnUiThread(() -> {
@@ -354,6 +362,84 @@ public class AnalyzeActivity extends AppCompatActivity {
                                     + predictionConfidence
                                     + "%"
                     );
+
+
+                    // =================================================
+                    // UPDATE AI RESULT TO DATABASE
+                    // =================================================
+
+                    if (analysisId != -1) {
+
+                        ApiService apiService =
+                                RetrofitClient
+                                        .getClient()
+                                        .create(ApiService.class);
+
+
+                        NailAnalysis analysis =
+                                new NailAnalysis();
+
+
+                        analysis.setPredictedCondition(
+                                predictedCondition
+                        );
+
+
+                        analysis.setConfidence(
+                                (double) predictionConfidence
+                        );
+
+
+
+
+                        apiService
+                                .updateAnalysis(
+                                        analysisId,
+                                        analysis
+                                )
+                                .enqueue(
+                                        new Callback<NailAnalysis>() {
+
+                                            @Override
+                                            public void onResponse(
+                                                    Call<NailAnalysis> call,
+                                                    Response<NailAnalysis> response
+                                            ) {
+
+                                                if (response.isSuccessful()) {
+
+                                                    Log.d(
+                                                            "AI_DATABASE",
+                                                            "✅ AI result saved successfully"
+                                                    );
+
+                                                } else {
+
+                                                    Log.e(
+                                                            "AI_DATABASE",
+                                                            "❌ Database update failed: "
+                                                                    + response.code()
+                                                    );
+                                                }
+                                            }
+
+
+                                            @Override
+                                            public void onFailure(
+                                                    Call<NailAnalysis> call,
+                                                    Throwable t
+                                            ) {
+
+                                                Log.e(
+                                                        "AI_DATABASE",
+                                                        "❌ Database update error: "
+                                                                + t.getMessage(),
+                                                        t
+                                                );
+                                            }
+                                        }
+                                );
+                    }
                 }
 
 
