@@ -22,7 +22,7 @@ public class ClassificationHelper {
     // =========================
 
     private static final String MODEL_NAME =
-            "classification.tflite";
+            "nail_classification.tflite";
 
     private static final int INPUT_SIZE = 224;
     private static final int CHANNELS = 3;

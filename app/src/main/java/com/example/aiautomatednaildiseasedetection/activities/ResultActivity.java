@@ -19,6 +19,7 @@ import com.example.aiautomatednaildiseasedetection.network.RetrofitClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import android.view.View;
 
 public class ResultActivity extends AppCompatActivity {
 
@@ -42,8 +43,11 @@ public class ResultActivity extends AppCompatActivity {
     // AI classification result
     private String predictedCondition;
     private float predictionConfidence;
+    private String predictedSeverity;
+    private float severityConfidence;
 
     private ApiService apiService;
+    private androidx.cardview.widget.CardView cardSeverity;
 
 
     @Override
@@ -52,6 +56,8 @@ public class ResultActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_result);
+        cardSeverity = findViewById(R.id.cardSeverity);
+
 
 
         // ==========================
@@ -76,6 +82,11 @@ public class ResultActivity extends AppCompatActivity {
                         "predictionConfidence",
                         0f
                 );
+        predictedSeverity =
+                getIntent().getStringExtra("predictedSeverity");
+
+        severityConfidence =
+                getIntent().getFloatExtra("severityConfidence", 0f);
 
 
         // ==========================
@@ -289,25 +300,49 @@ public class ResultActivity extends AppCompatActivity {
         // Severity model is not
         // connected yet.
 
-        int severity = 0;
 
+        // Severity Card Visibility
+        if (disease != null &&
+                disease.trim().equalsIgnoreCase("healthy_nail")) {
 
-        progressSeverity.setMax(100);
+            cardSeverity.setVisibility(View.GONE);
 
-        progressSeverity.setProgress(
-                severity
-        );
+        } else {
 
+            cardSeverity.setVisibility(View.VISIBLE);
 
-        txtSeverityValue.setText(
-                String.valueOf(severity)
-        );
+            if (predictedSeverity != null &&
+                    !predictedSeverity.isEmpty()) {
 
+                txtSeverity.setText(predictedSeverity);
 
-        txtSeverity.setText(
-                "Mild"
-        );
+                txtSeverityValue.setText(
+                        String.format(
+                                java.util.Locale.US,
+                                "%.1f%%",
+                                severityConfidence
+                        )
+                );
 
+                int severityValue = 0;
+
+                if (predictedSeverity.equalsIgnoreCase("Mild")) {
+                    severityValue = 1;
+                } else if (predictedSeverity.equalsIgnoreCase("Moderate")) {
+                    severityValue = 2;
+                } else if (predictedSeverity.equalsIgnoreCase("Severe")) {
+                    severityValue = 3;
+                }
+
+                progressSeverity.setMax(3);
+                progressSeverity.setProgress(severityValue);
+
+            } else {
+                txtSeverity.setText("Not available");
+                txtSeverityValue.setText("--");
+                progressSeverity.setProgress(0);
+            }
+        }
 
         // ==========================
         // Description

@@ -34,6 +34,11 @@ public class AnalyzeActivity extends AppCompatActivity {
 
     private SegmentationHelper segmentationHelper;
     private ClassificationHelper classificationHelper;
+    private SeverityHelper severityHelper;
+
+    // Severity prediction result
+    private String predictedSeverity = null;
+    private float severityConfidence = 0f;
 
     private ExecutorService executorService;
 
@@ -123,6 +128,24 @@ public class AnalyzeActivity extends AppCompatActivity {
                     e
             );
         }
+
+        // Load Severity Model
+        try {
+            severityHelper = new SeverityHelper(this);
+
+            Log.d(
+                    "AI_MODEL",
+                    "Severity model loaded successfully"
+            );
+
+        } catch (Exception e) {
+            Log.e(
+                    "AI_MODEL",
+                    "Severity model failed to load",
+                    e
+            );
+        }
+
 
 
         // =========================
@@ -334,6 +357,11 @@ public class AnalyzeActivity extends AppCompatActivity {
                             classificationHelper.classify(
                                     segmentedNail
                             );
+                    Log.d("AI_DEBUG", "Prediction result = "
+                            + (result == null ? "NULL" : result.condition));
+
+                    Log.d("AI_DEBUG", "Confidence = "
+                            + (result == null ? "NULL" : result.confidence));
 
 
                     predictedCondition =
@@ -341,6 +369,26 @@ public class AnalyzeActivity extends AppCompatActivity {
 
                     predictionConfidence =
                             result.confidence;
+
+                    if (severityHelper != null) {
+
+                        Log.d("AI_SEVERITY", "Starting severity prediction");
+
+                        SeverityHelper.SeverityResult severityResult =
+                                severityHelper.predict(segmentedNail);
+
+                        if (severityResult != null) {
+
+                            predictedSeverity = severityResult.severity;
+                            severityConfidence = severityResult.confidence;
+
+                            Log.d("AI_SEVERITY",
+                                    "Predicted severity: " + predictedSeverity);
+
+                            Log.d("AI_SEVERITY",
+                                    "Severity confidence: " + severityConfidence);
+                        }
+                    }
 
 
                     Log.d(
@@ -418,7 +466,7 @@ public class AnalyzeActivity extends AppCompatActivity {
                                                     Log.e(
                                                             "AI_DATABASE",
                                                             "❌ Database update failed: "
-                                                                    + response.code()
+                                                                      + response.code()
                                                     );
                                                 }
                                             }
@@ -527,6 +575,17 @@ public class AnalyzeActivity extends AppCompatActivity {
                 "predictedCondition",
                 predictedCondition
         );
+
+        intent.putExtra(
+                "predictedSeverity",
+                predictedSeverity
+        );
+
+        intent.putExtra(
+                "severityConfidence",
+                severityConfidence
+        );
+
 
 
         // =========================

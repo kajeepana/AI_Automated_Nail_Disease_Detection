@@ -1,9 +1,11 @@
+kotlin
 plugins {
     alias(libs.plugins.android.application)
 }
 
 android {
     namespace = "com.example.aiautomatednaildiseasedetection"
+
     compileSdk {
         version = release(36) {
             minorApiLevel = 1
@@ -27,6 +29,7 @@ android {
             }
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -39,13 +42,16 @@ dependencies {
     implementation(libs.constraintlayout)
     implementation(libs.material)
 
+    // Retrofit API
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
     implementation("com.squareup.retrofit2:converter-scalars:2.11.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
-    implementation("com.squareup.retrofit2:converter-scalars:2.11.0")
+
+    // TensorFlow Lite
     implementation("org.tensorflow:tensorflow-lite:2.17.0")
 
+    // Unit and Instrumentation Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(libs.ext.junit)

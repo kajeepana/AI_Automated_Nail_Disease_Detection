@@ -27,8 +27,8 @@
         <activity android:name=".activities.FeedbackActivity" />
         <activity android:name=".activities.LeaveActivity" />
         <activity
-            android:name=".activities.ForgotPasswordActivity"
-            android:exported="false" />
+            android:name=".activities.TFLiteTestActivity"
+            android:exported="true" />
         <activity
             android:name=".activities.VerifyOtpActivity"
             android:exported="false" />
