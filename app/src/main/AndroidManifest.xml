@@ -20,6 +20,8 @@
         <activity android:name=".activities.UploadImageActivity" />
         <activity android:name=".activities.ProfileActivity" />
         <activity android:name=".activities.LoginActivity" />
+        <activity android:name=".activities.ForgotPasswordActivity"
+            android:exported="false" />
         <activity android:name=".activities.RegisterActivity" />
         <activity android:name=".activities.WelcomeActivity" />
         <activity android:name=".activities.AnalyzeActivity" />

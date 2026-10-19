@@ -92,7 +92,11 @@
                 android:layout_marginTop="8dp"
                 android:numStars="5"
                 android:stepSize="1"
-                android:rating="5" />
+                android:rating="0"
+                android:progressTint="#6950A1"
+                android:secondaryProgressTint="#D6D6D6"
+                android:progressBackgroundTint="#D6D6D6"
+                android:isIndicator="false" />
 
             <!-- Submit Button -->
             <Button

@@ -16,26 +16,27 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:paddingTop="20dp">
 
             <ImageButton
                 android:id="@+id/btnBack"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="@drawable/button_white"
+                android:contentDescription="Back"
                 android:padding="10dp"
-                android:src="@android:drawable/ic_media_previous"
-                android:contentDescription="Back"/>
+                android:src="@android:drawable/ic_media_previous" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
                 android:text="Upload Nail Image"
-                android:textSize="22sp"
-                android:textStyle="bold"
                 android:textColor="#243B8F"
-                android:layout_marginStart="15dp"/>
+                android:textSize="22sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
 
@@ -170,14 +171,17 @@
 
             <ImageView
                 android:id="@+id/imgPreview"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:src="@android:drawable/stat_sys_upload"
-                android:contentDescription="Upload"/>
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:contentDescription="Uploaded nail image"
+                android:visibility="gone" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/txtTapUpload"
+                android:visibility="visible"
                 android:text="Tap to Upload"
                 android:textStyle="bold"
                 android:textSize="18sp"
@@ -186,6 +190,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/txtFileInfo"
+                android:visibility="visible"
                 android:text="JPG, PNG up to 10MB"
                 android:textColor="#777777"
                 android:textSize="12sp"/>

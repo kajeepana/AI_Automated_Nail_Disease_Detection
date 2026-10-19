@@ -10,6 +10,8 @@ import android.provider.MediaStore;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -44,7 +46,8 @@ public class UploadImageActivity extends AppCompatActivity {
     private Button btnAnalyze;
 
     private ImageView imgPreview;
-
+    private TextView txtTapUpload;
+    private TextView txtFileInfo;
     private Uri imageUri;
 
     private String loggedInEmail;
@@ -91,7 +94,8 @@ public class UploadImageActivity extends AppCompatActivity {
 
         imgPreview = findViewById(R.id.imgPreview);
 
-
+        txtTapUpload = findViewById(R.id.txtTapUpload);
+        txtFileInfo = findViewById(R.id.txtFileInfo);
         // ==========================================
         // CAMERA PERMISSION
         // ==========================================
@@ -130,10 +134,10 @@ public class UploadImageActivity extends AppCompatActivity {
 
                                     imageUri = selectedUri;
 
-                                    imgPreview.setImageURI(
-                                            imageUri
-                                    );
-
+                                    imgPreview.setImageURI(imageUri);
+                                    imgPreview.setVisibility(View.VISIBLE);
+                                    txtTapUpload.setVisibility(View.GONE);
+                                    txtFileInfo.setVisibility(View.GONE);
                                     Toast.makeText(
                                             UploadImageActivity.this,
                                             "Image selected successfully",
@@ -186,12 +190,12 @@ public class UploadImageActivity extends AppCompatActivity {
 
                                     if (bitmap != null) {
 
-                                        imgPreview.setImageBitmap(
-                                                bitmap
-                                        );
+                                        imgPreview.setImageBitmap(bitmap);
+                                        imgPreview.setVisibility(View.VISIBLE);
+                                        txtTapUpload.setVisibility(View.GONE);
+                                        txtFileInfo.setVisibility(View.GONE);
 
-                                        imageUri =
-                                                getImageUri(bitmap);
+                                        imageUri = getImageUri(bitmap);
 
                                         Toast.makeText(
                                                 UploadImageActivity.this,

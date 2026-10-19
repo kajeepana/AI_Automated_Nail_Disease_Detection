@@ -61,12 +61,14 @@
             android:layout_height="56dp"
             android:layout_marginTop="14dp"
             android:background="@drawable/edittext_bg"
-            android:drawablePadding="12dp"
+            android:drawableStart="@drawable/ic_professional_id_small_v2"
+            android:drawablePadding="3dp"
             android:hint="Enter Professional ID"
-            android:padding="15dp"
-            android:inputType="text"/>
+            android:paddingStart="1dp"
+            android:paddingEnd="15dp"
+            android:gravity="center_vertical"
+            android:inputType="text" />
 
-        <!-- Email -->
         <EditText
             android:id="@+id/etEmail"
             android:layout_width="match_parent"
@@ -86,7 +88,7 @@
             android:layout_height="56dp"
             android:layout_marginTop="14dp"
             android:background="@drawable/edittext_bg"
-            android:drawableEnd="@drawable/ic_visibility"
+            android:drawableStart="@drawable/ic_visibility"
             android:drawablePadding="12dp"
             android:hint="Enter your password"
             android:padding="15dp"
@@ -99,7 +101,7 @@
             android:layout_height="56dp"
             android:layout_marginTop="14dp"
             android:background="@drawable/edittext_bg"
-            android:drawableEnd="@drawable/ic_visibility"
+            android:drawableStart="@drawable/ic_visibility"
             android:drawablePadding="12dp"
             android:hint="Re-enter your password"
             android:padding="15dp"

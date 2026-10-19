@@ -254,15 +254,20 @@ public class ProfileActivity extends AppCompatActivity {
             startActivity(intent);
 
         });
+
         btnHistory.setOnClickListener(v -> {
+            Toast.makeText(
+                    ProfileActivity.this,
+                    "History button clicked",
+                    Toast.LENGTH_SHORT
+            ).show();
 
             Intent intent = new Intent(
                     ProfileActivity.this,
                     AnalysisHistoryActivity.class
             );
 
-            intent.putExtra("email",  loggedInEmail);
-
+            intent.putExtra("email", loggedInEmail);
             startActivity(intent);
         });
 

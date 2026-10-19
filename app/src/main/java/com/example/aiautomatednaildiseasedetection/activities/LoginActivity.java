@@ -8,6 +8,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.text.method.PasswordTransformationMethod;
+import android.text.method.HideReturnsTransformationMethod;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -35,12 +38,49 @@ public class LoginActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_login);
 
+
         // Initialize Retrofit API
         apiService = RetrofitClient.getClient().create(ApiService.class);
 
         // Find Views
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
+
+        etPassword.setOnTouchListener((v, event) -> {
+            if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
+
+                android.graphics.drawable.Drawable icon =
+                        etPassword.getCompoundDrawablesRelative()[0];
+
+                if (icon != null &&
+                        event.getX() <= etPassword.getCompoundPaddingStart()) {
+
+                    int cursorPosition = etPassword.getSelectionStart();
+
+                    if (etPassword.getTransformationMethod()
+                            instanceof PasswordTransformationMethod) {
+
+                        etPassword.setTransformationMethod(
+                                HideReturnsTransformationMethod.getInstance());
+
+                    } else {
+
+                        etPassword.setTransformationMethod(
+                                PasswordTransformationMethod.getInstance());
+                    }
+
+                    if (cursorPosition >= 0) {
+                        etPassword.setSelection(
+                                Math.min(cursorPosition, etPassword.length()));
+                    }
+
+                    return true;
+                }
+            }
+
+            return false;
+        });
+
 
         btnLogin = findViewById(R.id.btnLogin);
         btnRegister = findViewById(R.id.btnRegister);

@@ -85,9 +85,13 @@ public class AnalysisHistoryActivity extends AppCompatActivity {
         // RecyclerView
         // ==========================
 
-        recyclerHistory.setLayoutManager(
-                new LinearLayoutManager(this)
-        );
+        LinearLayoutManager layoutManager =
+                new LinearLayoutManager(this);
+
+        recyclerHistory.setLayoutManager(layoutManager);
+        recyclerHistory.setHasFixedSize(false);
+        recyclerHistory.setNestedScrollingEnabled(true);
+        recyclerHistory.setOverScrollMode(View.OVER_SCROLL_IF_CONTENT_SCROLLS);
 
 
         // ==========================

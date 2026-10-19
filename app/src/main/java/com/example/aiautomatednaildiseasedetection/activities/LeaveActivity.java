@@ -35,7 +35,10 @@ public class LeaveActivity extends AppCompatActivity {
         txtCancel = dialog.findViewById(R.id.txtCancel);
 
         // Continue Session
-        btnContinue.setOnClickListener(v -> dialog.dismiss());
+        btnContinue.setOnClickListener(v -> {
+            dialog.dismiss();
+            finish();
+        });
 
         // Logout
         btnLogout.setOnClickListener(v -> {
@@ -46,7 +49,10 @@ public class LeaveActivity extends AppCompatActivity {
         });
 
         // Cancel
-        txtCancel.setOnClickListener(v -> dialog.dismiss());
+        txtCancel.setOnClickListener(v -> {
+            dialog.dismiss();
+            finish();
+        });
 
         dialog.show();
     }

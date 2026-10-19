@@ -3,6 +3,9 @@ package com.example.aiautomatednaildiseasedetection.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.text.method.PasswordTransformationMethod;
+import android.text.method.HideReturnsTransformationMethod;
+import android.view.MotionEvent;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -66,6 +69,53 @@ public class RegisterActivity extends AppCompatActivity {
 
         etConfirmPassword =
                 findViewById(R.id.etConfirmPassword);
+
+        // Password eye icon - show/hide password
+        etPassword.setOnTouchListener((view, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                if (event.getRawX() >= etPassword.getRight()
+                        - etPassword.getCompoundDrawables()[2].getBounds().width()
+                        - etPassword.getPaddingEnd()) {
+
+                    if (etPassword.getTransformationMethod()
+                            instanceof PasswordTransformationMethod) {
+                        etPassword.setTransformationMethod(
+                                HideReturnsTransformationMethod.getInstance());
+                    } else {
+                        etPassword.setTransformationMethod(
+                                PasswordTransformationMethod.getInstance());
+                    }
+
+                    etPassword.setSelection(etPassword.getText().length());
+                    return true;
+                }
+            }
+            return false;
+        });
+
+        // Confirm password eye icon - show/hide password
+        etConfirmPassword.setOnTouchListener((view, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                if (event.getRawX() >= etConfirmPassword.getRight()
+                        - etConfirmPassword.getCompoundDrawables()[2].getBounds().width()
+                        - etConfirmPassword.getPaddingEnd()) {
+
+                    if (etConfirmPassword.getTransformationMethod()
+                            instanceof PasswordTransformationMethod) {
+                        etConfirmPassword.setTransformationMethod(
+                                HideReturnsTransformationMethod.getInstance());
+                    } else {
+                        etConfirmPassword.setTransformationMethod(
+                                PasswordTransformationMethod.getInstance());
+                    }
+
+                    etConfirmPassword.setSelection(
+                            etConfirmPassword.getText().length());
+                    return true;
+                }
+            }
+            return false;
+        });
 
         btnCreateAccount =
                 findViewById(R.id.btnCreateAccount);
