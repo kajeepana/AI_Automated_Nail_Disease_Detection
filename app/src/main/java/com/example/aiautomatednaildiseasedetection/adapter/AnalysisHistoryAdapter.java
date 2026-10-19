@@ -94,21 +94,24 @@ public class AnalysisHistoryAdapter
         }
 
         // Severity Score - NULL SAFE
-        // Severity Score - NULL SAFE
-        // Severity Score
         Double severityScoreValue = analysis.getSeverityScore();
 
+        double severityScore = 0.0;
+
         if (severityScoreValue != null) {
-            holder.txtSeverityScore.setText(
-                    String.format(
-                            java.util.Locale.US,
-                            "%.1f / 100",
-                            severityScoreValue
-                    )
-            );
-        } else {
-            holder.txtSeverityScore.setText("Score unavailable");
+            severityScore = severityScoreValue;
         }
+
+        // Keep severity between 0 and 100
+        severityScore = Math.max(0, Math.min(100, severityScore));
+
+        holder.txtSeverityScore.setText(
+                String.format(
+                        Locale.getDefault(),
+                        "%.0f / 100",
+                        severityScore
+                )
+        );
 
         // Status
         String status = analysis.getStatus();

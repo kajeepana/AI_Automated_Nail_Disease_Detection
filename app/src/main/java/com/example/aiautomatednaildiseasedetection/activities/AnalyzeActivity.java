@@ -424,25 +424,21 @@ public class AnalyzeActivity extends AppCompatActivity {
                                         .create(ApiService.class);
 
 
+                        NailAnalysis analysis =
+                                new NailAnalysis();
 
-                        NailAnalysis analysis = new NailAnalysis();
 
-                        analysis.setPredictedCondition(predictedCondition);
-                        analysis.setConfidence((double) predictionConfidence);
-
-// Save severity label
-                        analysis.setSeverityLabel(predictedSeverity);
-
-// Save the same percentage currently displayed by your app
-                        analysis.setSeverityScore((double) severityConfidence);
-
-// Save status
-                        analysis.setStatus("Completed");
-
-// Save model version
-                        analysis.setModelVersion(
-                                "Segmentation + Classification + Severity"
+                        analysis.setPredictedCondition(
+                                predictedCondition
                         );
+
+
+                        analysis.setConfidence(
+                                (double) predictionConfidence
+                        );
+
+
+
 
                         apiService
                                 .updateAnalysis(
