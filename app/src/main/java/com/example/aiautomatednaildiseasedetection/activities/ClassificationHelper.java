@@ -164,21 +164,39 @@ public class ClassificationHelper {
         // Input values = 0 - 255
         // =========================
 
-        for (int pixel : pixels) {
+       // for (int pixel : pixels) {
 
-            float r =
-                    (pixel >> 16) & 0xFF;
+          //  float r =
+             //       (pixel >> 16) & 0xFF;
 
-            float g =
-                    (pixel >> 8) & 0xFF;
+           // float g =
+                //    (pixel >> 8) & 0xFF;
 
-            float b =
-                    pixel & 0xFF;
+           // float b =
+           //         pixel & 0xFF;
 
-            inputBuffer.putFloat(r);
-            inputBuffer.putFloat(g);
-            inputBuffer.putFloat(b);
-        }
+          //  inputBuffer.putFloat(r);
+         //   inputBuffer.putFloat(g);
+         //   inputBuffer.putFloat(b);
+        //} 
+        // EfficientNet preprocess_input (Torch mode)
+// Matches keras.applications.efficientnet.preprocess_input used in training
+final float[] MEAN = {0.485f, 0.456f, 0.406f};
+final float[] STD  = {0.229f, 0.224f, 0.225f};
+
+for (int pixel : pixels) {
+    float r = ((pixel >> 16) & 0xFF) / 255.0f;
+    float g = ((pixel >> 8)  & 0xFF) / 255.0f;
+    float b = (pixel & 0xFF) / 255.0f;
+
+    r = (r - MEAN[0]) / STD[0];
+    g = (g - MEAN[1]) / STD[1];
+    b = (b - MEAN[2]) / STD[2];
+
+    inputBuffer.putFloat(r);
+    inputBuffer.putFloat(g);
+    inputBuffer.putFloat(b);
+}
 
         inputBuffer.rewind();
 
