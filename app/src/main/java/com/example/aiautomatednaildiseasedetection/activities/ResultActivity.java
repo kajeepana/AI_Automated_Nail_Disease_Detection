@@ -314,17 +314,7 @@ public class ResultActivity extends AppCompatActivity {
             if (predictedSeverity != null &&
                     !predictedSeverity.isEmpty()) {
 
-                String severityLabel;
-
-                if (severityConfidence <= 50.0f) {
-                    severityLabel = "Mild";
-                } else if (severityConfidence <= 55.0f) {
-                    severityLabel = "Moderate";
-                } else {
-                    severityLabel = "Severe";
-                }
-
-                txtSeverity.setText(severityLabel);
+                txtSeverity.setText(predictedSeverity);
 
                 txtSeverityValue.setText(
                         String.format(

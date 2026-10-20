@@ -437,7 +437,13 @@ public class AnalyzeActivity extends AppCompatActivity {
                                 (double) predictionConfidence
                         );
 
+                        // Save severity label
+                        analysis.setSeverityLabel(predictedSeverity);
 
+                        // Save severity score
+                        analysis.setSeverityScore(
+                                (double) severityConfidence
+                        );
 
 
                         apiService

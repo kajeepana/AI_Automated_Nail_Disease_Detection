@@ -70,12 +70,16 @@ public class RegisterActivity extends AppCompatActivity {
         etConfirmPassword =
                 findViewById(R.id.etConfirmPassword);
 
+
         // Password eye icon - show/hide password
         etPassword.setOnTouchListener((view, event) -> {
             if (event.getAction() == MotionEvent.ACTION_UP) {
-                if (event.getRawX() >= etPassword.getRight()
-                        - etPassword.getCompoundDrawables()[2].getBounds().width()
-                        - etPassword.getPaddingEnd()) {
+                android.graphics.drawable.Drawable[] drawables =
+                        etPassword.getCompoundDrawablesRelative();
+                android.graphics.drawable.Drawable eye = drawables[0];
+
+                if (eye != null && event.getX() <=
+                        etPassword.getPaddingStart() + eye.getBounds().width() + 20) {
 
                     if (etPassword.getTransformationMethod()
                             instanceof PasswordTransformationMethod) {
@@ -93,12 +97,15 @@ public class RegisterActivity extends AppCompatActivity {
             return false;
         });
 
-        // Confirm password eye icon - show/hide password
+// Confirm password eye icon - show/hide password
         etConfirmPassword.setOnTouchListener((view, event) -> {
             if (event.getAction() == MotionEvent.ACTION_UP) {
-                if (event.getRawX() >= etConfirmPassword.getRight()
-                        - etConfirmPassword.getCompoundDrawables()[2].getBounds().width()
-                        - etConfirmPassword.getPaddingEnd()) {
+                android.graphics.drawable.Drawable[] drawables =
+                        etConfirmPassword.getCompoundDrawablesRelative();
+                android.graphics.drawable.Drawable eye = drawables[0];
+
+                if (eye != null && event.getX() <=
+                        etConfirmPassword.getPaddingStart() + eye.getBounds().width() + 20) {
 
                     if (etConfirmPassword.getTransformationMethod()
                             instanceof PasswordTransformationMethod) {
@@ -116,6 +123,7 @@ public class RegisterActivity extends AppCompatActivity {
             }
             return false;
         });
+
 
         btnCreateAccount =
                 findViewById(R.id.btnCreateAccount);

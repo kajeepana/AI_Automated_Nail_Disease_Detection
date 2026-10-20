@@ -7,6 +7,7 @@ import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.content.Intent;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -118,7 +119,7 @@ public class FeedbackActivity extends AppCompatActivity {
                                         Toast.LENGTH_SHORT
                                 ).show();
 
-                                finish();
+                                finishAffinity();
 
                             } else {
 
@@ -144,7 +145,13 @@ public class FeedbackActivity extends AppCompatActivity {
                     });
         });
 
-        // Cancel
-        txtCancel.setOnClickListener(v -> finish());
+        // Cancel & Close - Go to Welcome Screen
+        txtCancel.setOnClickListener(v -> {
+            Intent intent = new Intent(FeedbackActivity.this, WelcomeActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+            finish();
+        });
+
     }
 }
